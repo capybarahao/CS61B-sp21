@@ -10,7 +10,7 @@ public class IntListExercises {
      */
     public static void addConstant(IntList lst, int c) {
         IntList head = lst;
-        while (head.rest != null) {
+        while (head != null) {
             head.first += c;
             head = head.rest;
         }
@@ -33,7 +33,9 @@ public class IntListExercises {
         }
     }
 
-    /** Returns the max value in the IntList starting at L. */
+    /**
+     * Returns the max value in the IntList starting at L.
+     */
     public static int max(IntList L) {
         int max = L.first;
         IntList p = L.rest;
@@ -46,12 +48,13 @@ public class IntListExercises {
         return max;
     }
 
-    /** Returns true if the last digit of x is equal to
-     *  the first digit of x.
+    /**
+     * Returns true if the last digit of x is equal to
+     * the first digit of x.
      */
     public static boolean firstDigitEqualsLastDigit(int x) {
         int lastDigit = x % 10;
-        while (x > 10) {
+        while (x >= 10) {
             x = x / 10;
         }
         int firstDigit = x % 10;
@@ -66,17 +69,19 @@ public class IntListExercises {
      * @return True if there was an update to the list
      */
     public static boolean squarePrimes(IntList lst) {
-        // Base Case: we have reached the end of the list
-        if (lst == null) {
-            return false;
+        boolean changed = false; // Flag to track if any changes were made
+
+        // Iterate through the list
+        IntList current = lst;
+        while (current != null) {
+            // Check if the current element is prime
+            if (Primes.isPrime(current.first)) {
+                current.first *= current.first; // Square the prime number
+                changed = true; // Mark that a change was made
+            }
+            current = current.rest; // Move to the next element in the list
         }
 
-        boolean currElemIsPrime = Primes.isPrime(lst.first);
-
-        if (currElemIsPrime) {
-            lst.first *= lst.first;
-        }
-
-        return currElemIsPrime || squarePrimes(lst.rest);
+        return changed; // Return whether any changes were made
     }
 }
