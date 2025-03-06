@@ -115,6 +115,7 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        board.setViewingPerspective(side);
         for (int i = 0; i < this.board.size(); i++) {
             int col = i;
             boolean change = columnTilt(col);
@@ -127,6 +128,7 @@ public class Model extends Observable {
         if (changed) {
             setChanged();
         }
+        board.setViewingPerspective(Side.NORTH);
         return changed;
     }
 
@@ -154,22 +156,18 @@ public class Model extends Observable {
                 else if (t.value() == ot.value()) {
 
                     if (!isMergedTile.contains(j)) {
-                        b.move (col, j, t);
-                        this.score += t.value();
+                        toRow = j;
+                        this.score += t.value() * 2;
                         isMergedTile.add(j);
                         changed = true;
-                    }
-                    else {
-                        b.move (col, toRow, t);
                     }
                     break;
                 }
                 else if (t.value() != ot.value()) {
-                    b.move (col, toRow, t);
                     break;
                 }
-
             }
+            b.move (col, toRow, t);
         }
         return changed;
     }
