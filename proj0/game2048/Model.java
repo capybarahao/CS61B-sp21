@@ -132,37 +132,48 @@ public class Model extends Observable {
         return changed;
     }
 
+    // deal with one column situation, return true if there's any change(move or merge) in this column
     public boolean columnTilt(int col) {
         boolean changed;
         changed = false;
         Board b = this.board;
+        // record which tile is a merged tile in this operation
+        // if it's a merged tile then it should not merge with other tile again
         List<Integer> isMergedTile = new ArrayList<>();
 
         // start from the second row from top
         for (int i = b.size() - 2; i >= 0 ; i--) {
             Tile t = b.tile(col,i);
+            // toRow records which row this tile will be moved,
+            // whether just move or move with merge in this operation
             int toRow = i;
             if (t == null) {
                 continue;
             }
-
+            // iterate all tiles on top of this tile(t), down top
             for (int j = i + 1; j < b.size(); j++) {
                 Tile ot = b.tile(col,j);
-                //
+
                 if (ot == null) {
                     toRow = j;
                     changed = true;
                 }
                 else if (t.value() == ot.value()) {
-
+                    // if same value, and ot is not a merged tile,
+                    // then record score, record that ot place is already a merged tile
+                    // break, then t start moving and merging
                     if (!isMergedTile.contains(j)) {
                         toRow = j;
                         this.score += t.value() * 2;
                         isMergedTile.add(j);
                         changed = true;
                     }
+                    // if same value, but ot is a merged tile,
+                    // break, then t move to the farthest null
                     break;
                 }
+                // if not same value.
+                // break, then t move to the farthest null
                 else if (t.value() != ot.value()) {
                     break;
                 }
