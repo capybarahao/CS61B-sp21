@@ -1,6 +1,8 @@
 package game2048;
 
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Observable;
 
 
@@ -113,6 +115,13 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        for (int i = 0; i < this.board.size(); i++) {
+            int col = i;
+            boolean change = columnTilt(col);
+            if (change) {
+                changed = true;
+            }
+        }
 
         checkGameOver();
         if (changed) {
@@ -120,6 +129,51 @@ public class Model extends Observable {
         }
         return changed;
     }
+
+    public boolean columnTilt(int col) {
+        boolean changed;
+        changed = false;
+        Board b = this.board;
+        List<Integer> isMergedTile = new ArrayList<>();
+
+        // start from the second row from top
+        for (int i = b.size() - 2; i >= 0 ; i--) {
+            Tile t = b.tile(col,i);
+            int toRow = i;
+            if (t == null) {
+                continue;
+            }
+
+            for (int j = i + 1; j < b.size(); j++) {
+                Tile ot = b.tile(col,j);
+                //
+                if (ot == null) {
+                    toRow = j;
+                    changed = true;
+                }
+                else if (t.value() == ot.value()) {
+
+                    if (!isMergedTile.contains(j)) {
+                        b.move (col, j, t);
+                        this.score += t.value();
+                        isMergedTile.add(j);
+                        changed = true;
+                    }
+                    else {
+                        b.move (col, toRow, t);
+                    }
+                    break;
+                }
+                else if (t.value() != ot.value()) {
+                    b.move (col, toRow, t);
+                    break;
+                }
+
+            }
+        }
+        return changed;
+    }
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
