@@ -15,7 +15,7 @@ public class LinkedListDeque<T> {
     }
 
     // first item in list will be sentinel.next
-    private Node sentinel;
+    private final Node sentinel;
     private int size;
 
     // create an empty LinkedListDeque
@@ -52,21 +52,21 @@ public class LinkedListDeque<T> {
     // Prints the items in the deque from first to last, separated by a space.
     // Once all the items have been printed, print out a new line.
     public void printDeque() {
-        if (sentinel.next == sentinel) { // Correct empty check
+        if (isEmpty()) { // Correct empty check
             System.out.print("Empty deque");
         }
         Node nodeGuide = sentinel.next;
         for (int i = 0; i < size; i++) {
-            System.out.print(nodeGuide + " ");
+            System.out.print(nodeGuide.item + " ");
             nodeGuide = nodeGuide.next;
         }
-        System.out.print("/n");
+        System.out.print("\n");
     }
 
     // Removes and returns the item at the front of the deque.
     // If no such item exists, returns null.
     public T removeFirst() {
-        if (sentinel.next == sentinel) { // Correct empty check
+        if (isEmpty()) { // Correct empty check
             return null;
         }
         Node nodeFirst = sentinel.next;
@@ -81,7 +81,7 @@ public class LinkedListDeque<T> {
     // Removes and returns the item at the back of the deque.
     // If no such item exists, returns null.
     public T removeLast() {
-        if (sentinel.next == sentinel) { // Correct empty check
+        if (isEmpty()) { // Correct empty check
             return null;
         }
         Node nodeLast = sentinel.prev;
@@ -97,7 +97,11 @@ public class LinkedListDeque<T> {
     // where 0 is the front, 1 is the next item, and so forth.
     // If no such item exists, returns null
     public T get(int index) {
-        if (sentinel.next == sentinel) { // Correct empty check
+        if (isEmpty()) { // Correct empty check
+            return null;
+        }
+        // check index valid
+        if (index >= size || index < 0) {
             return null;
         }
         Node nodeGuide = sentinel;
@@ -116,13 +120,13 @@ public class LinkedListDeque<T> {
         return getRecursive(index - 1);
     }
 
-    public Iterator<T> iterator() {
-
-    }
-
-    public boolean equals(Object o) {
-
-
-    }
+//    public Iterator<T> iterator() {
+//
+//    }
+//
+//    public boolean equals(Object o) {
+//
+//
+//    }
 
 }

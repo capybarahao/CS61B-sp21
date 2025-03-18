@@ -150,8 +150,12 @@ public class LinkedListDequeTest {
         lld1.addFirst(3);
         Integer first = 3;
         assertEquals("Should be 3", first, lld1.get(0));
+
         lld1.addFirst(4);
         Integer second = 4;
         assertEquals("Should be 4", second, lld1.get(0));
+
+        assertNull("Should be null", lld1.get(3));
+        assertNull("Should be null", lld1.get(-1));
     }
 }
