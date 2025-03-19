@@ -27,7 +27,7 @@ public class ArrayDeque<T> {
         }
         // in situation where actual items[] is like:
         // [ , , , ,2,2,4,5, , , ,] or [ , , , , ,2,2,4,5]  direct copy
-        if (nextFirst < nextLast || nextLast == 0) {
+        if (nextFirst < nextLast && abs(nextLast - nextFirst) != 1 || (nextLast == 0 && nextFirst != items.length - 1)) {
             System.arraycopy(items, nextFirst + 1, a, 0, size);
         }
         else {
@@ -42,12 +42,15 @@ public class ArrayDeque<T> {
         }
 
         items = a;
-        int nextFirst = items.length - 1;
-        int nextLast = size;
+        nextFirst = items.length - 1;
+        nextLast = size;
     }
 
     public void addFirst(T item) {
         // resize condition
+        if (items.length == size) {
+            resize(size * 4);
+        }
 
         items[nextFirst] = item;
         size +=1;
@@ -59,7 +62,9 @@ public class ArrayDeque<T> {
 
     public void addLast(T item) {
         // resize condition
-
+        if (items.length == size) {
+            resize(size * 4);
+        }
         items[nextLast] = item;
         size += 1;
         nextLast += 1;
@@ -70,7 +75,7 @@ public class ArrayDeque<T> {
 
     // Returns true if deque is empty, false otherwise.
     public boolean isEmpty() {
-        if (nextLast - nextFirst == 1 || nextFirst - nextLast == items.length - 1) {
+        if (size == 0) {
             return true;
         }
         return false;
@@ -126,12 +131,18 @@ public class ArrayDeque<T> {
         if (isEmpty()) {
             return null;
         }
-        nextFirst += 1;
         size -= 1;
+        nextFirst += 1;
         if (nextFirst > items.length - 1) {
             nextFirst = 0;
         }
-        return items[nextFirst];
+        T fst = items[nextFirst];
+        // resize
+        if (items.length / 4 > size) {
+            resize(size * 4);
+        }
+
+        return fst;
     }
 
     // Removes and returns the item at the back of the deque.
@@ -141,12 +152,19 @@ public class ArrayDeque<T> {
         if (isEmpty()) {
             return null;
         }
-        nextLast -= 1;
         size -= 1;
+        nextLast -= 1;
         if (nextLast < 0) {
-            nextLast = items.length;
+            nextLast = items.length - 1;
         }
-        return items[nextLast];
+        T lst = items[nextLast];
+
+        // resize
+        if (items.length / 4 > size) {
+            resize(size * 4);
+        }
+
+        return lst;
     }
 
     // Gets the item at the given index,
@@ -165,7 +183,7 @@ public class ArrayDeque<T> {
         // [3,4, , , , ,0,1,2]
         // in situation where actual items[] is like:
         // [ , , , ,2,2,4,5, , , ,] or [ , , , , ,2,2,4,5]
-        if (nextFirst < nextLast || nextLast == 0) {
+        if (nextFirst < nextLast && abs(nextLast - nextFirst) != 1 || (nextLast == 0 && nextFirst != items.length - 1)){
             return items[nextFirst + 1 + index];
         }
         else {
@@ -173,7 +191,13 @@ public class ArrayDeque<T> {
                 return items[index];
             }
             else { // [5, , , , ,2,2,4]
-                int L = nextFirst + 1 + index - items.length;
+                int L;
+                if (nextFirst + 1 + index >= items.length) {
+                    L = nextFirst + 1 + index - items.length;
+                }
+                else {
+                    L = nextFirst + 1 + index;
+                }
                 return items[L];
             }
         }
