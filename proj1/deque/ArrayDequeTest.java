@@ -155,4 +155,18 @@ public class ArrayDequeTest {
         assertNull("Should be null", lld1.get(3));
         assertNull("Should be null", lld1.get(-1));
     }
+    @Test
+    // Fill up , empty, fill up again
+    public void fillEmptyFillTest() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        ad1.addFirst(3);
+        ad1.addFirst(4);
+        ad1.removeFirst();
+        ad1.removeLast();
+        ad1.addFirst(5);
+        ad1.addFirst(6);
+        Integer second = 6;
+        assertEquals("Should be 6", second, ad1.get(0));
+
+    }
 }
