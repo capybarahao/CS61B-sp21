@@ -1,6 +1,8 @@
 package deque;
 
-public class LinkedListDeque<T> {
+import java.util.Iterator;
+
+public class LinkedListDeque<T> implements Iterable<T>{
 
     // node with double pointers
     public class Node {
@@ -120,13 +122,30 @@ public class LinkedListDeque<T> {
         return getRecursive(index - 1);
     }
 
-//    public Iterator<T> iterator() {
-//
-//    }
-//
-//    public boolean equals(Object o) {
-//
-//
-//    }
+    /** returns an iterator (a.k.a. seer) into ME */
+    public Iterator<T> iterator() {
+        return new LLDequeIterator();
+    }
+
+    // private class used only in method iterator()
+    private class LLDequeIterator implements Iterator<T> {
+        private Node wizPos;
+        public LLDequeIterator() {
+            wizPos = sentinel;
+        }
+
+        public boolean hasNext() {
+            return wizPos.next != sentinel;
+        }
+
+        public T next() {
+            T returnItem = wizPos.item;
+            wizPos = wizPos.next;
+            return returnItem;
+        }
+    }
+    public boolean equals(Object o) {
+
+    }
 
 }
