@@ -117,8 +117,8 @@ public class LinkedListDequeTest {
 
         boolean passed1 = false;
         boolean passed2 = false;
-        assertEquals("Should return null when removeFirst is called on an empty Deque,", null, lld1.removeFirst());
-        assertEquals("Should return null when removeLast is called on an empty Deque,", null, lld1.removeLast());
+        assertNull("Should return null when removeFirst is called on an empty Deque,", lld1.removeFirst());
+        assertNull("Should return null when removeLast is called on an empty Deque,", lld1.removeLast());
 
     }
 
@@ -142,7 +142,7 @@ public class LinkedListDequeTest {
     }
 
     @Test
-    // get() return right/null
+    // get() return right/ return null when out of index
     public void getTest() {
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
         lld1.addFirst(3);
@@ -155,5 +155,34 @@ public class LinkedListDequeTest {
 
         assertNull("Should be null", lld1.get(3));
         assertNull("Should be null", lld1.get(-1));
+    }
+    @Test
+    // iterator / for each works
+    public void iteratorTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        for (int i = 0; i < 100; i++) {
+            lld1.addLast(i);
+        }
+        for (int i : lld1) {
+            assertEquals("Should have the same value", i,lld1.removeFirst(), 0.0);
+        }
+    }
+    @Test
+    //
+    public void equalsTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        lld1.addFirst(5);
+        lld1.addFirst(23);
+        lld1.addFirst(42);
+
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+        lld2.addFirst(5);
+        lld2.addFirst(23);
+        lld2.addFirst(42);
+
+        assertTrue("Should be true", lld1.equals(lld2));
+        assertFalse("Should be false", lld1.equals(null));
+        assertFalse("Should be false", lld1.equals("fish"));
+        assertTrue("Should be true", lld1.equals(lld1));
     }
 }

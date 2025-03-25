@@ -131,11 +131,11 @@ public class LinkedListDeque<T> implements Iterable<T>{
     private class LLDequeIterator implements Iterator<T> {
         private Node wizPos;
         public LLDequeIterator() {
-            wizPos = sentinel;
+            wizPos = sentinel.next;
         }
 
         public boolean hasNext() {
-            return wizPos.next != sentinel;
+            return wizPos != sentinel;
         }
 
         public T next() {
@@ -144,8 +144,35 @@ public class LinkedListDeque<T> implements Iterable<T>{
             return returnItem;
         }
     }
-    public boolean equals(Object o) {
 
+    //  considered equal if:
+    //  o is a Deque and
+    //  o contains the same contents (as goverened by the generic T’s equals method) in the same order
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        LinkedListDeque<T> oo = (LinkedListDeque<T>) o;
+        int index = 0;
+        if (oo.size() != this.size()) {
+            return false;
+        }
+        for (T item : this) {
+            T itemoo = oo.get(index);
+            if (!itemoo.equals(item)) {
+                return false;
+            }
+            index ++;
+        }
+
+        return true;
     }
 
 }
