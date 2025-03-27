@@ -4,7 +4,7 @@ import static java.lang.Math.abs;
 
 public class ArrayDeque<T> {
 
-    private T[] items;
+    public T[] items;
     private int size;
 
     // circular array

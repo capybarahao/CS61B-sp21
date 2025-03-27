@@ -181,6 +181,7 @@ public class LinkedListDequeTest {
         lld2.addFirst(42);
 
         assertTrue("Should be true", lld1.equals(lld2));
+        assertTrue("Should be true", lld2.equals(lld1));
         assertFalse("Should be false", lld1.equals(null));
         assertFalse("Should be false", lld1.equals("fish"));
         assertTrue("Should be true", lld1.equals(lld1));

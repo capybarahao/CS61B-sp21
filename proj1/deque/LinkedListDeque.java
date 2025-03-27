@@ -156,20 +156,20 @@ public class LinkedListDeque<T> implements Iterable<T>{
         if (o == null) {
             return false;
         }
-        if (o.getClass() != this.getClass()) {
-            return false;
-        }
-        LinkedListDeque<T> oo = (LinkedListDeque<T>) o;
-        int index = 0;
-        if (oo.size() != this.size()) {
-            return false;
-        }
-        for (T item : this) {
-            T itemoo = oo.get(index);
-            if (!itemoo.equals(item)) {
+
+        if (o instanceof LinkedListDeque) {
+            LinkedListDeque<T> oo = (LinkedListDeque<T>) o;
+            int index = 0;
+            if (oo.size() != this.size()) {
                 return false;
             }
-            index ++;
+            for (T item : this) {
+                T itemoo = oo.get(index);
+                if (!itemoo.equals(item)) {
+                    return false;
+                }
+                index ++;
+            }
         }
 
         return true;
