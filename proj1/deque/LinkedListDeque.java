@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T>{
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
 
     // node with double pointers
     public class Node {
@@ -170,6 +170,9 @@ public class LinkedListDeque<T> implements Iterable<T>{
                 }
                 index ++;
             }
+        }
+        else {
+            return false;
         }
 
         return true;

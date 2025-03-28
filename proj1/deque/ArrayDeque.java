@@ -1,8 +1,10 @@
 package deque;
 
 import static java.lang.Math.abs;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class ArrayDeque<T> {
+public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
 
     public T[] items;
     private int size;
@@ -203,13 +205,70 @@ public class ArrayDeque<T> {
         }
     }
 
+    /** returns an iterator (a.k.a. seer) into ME */
+    public Iterator<T> iterator() {
+        return new ADequeIterator();
+    }
 
-//    public Iterator<T> iterator() {
-//
-//    }
-//
-//    public boolean equals(Object o) {
-//
-//
-//    }
+    private class ADequeIterator implements Iterator<T> {
+        private int currentPos;    // Current position in iteration
+        private int elementsLeft;  // Number of elements yet to iterate
+
+        public ADequeIterator() {
+            // Start at the position AFTER nextFirst (where first element is)
+            currentPos = (nextFirst + 1) % items.length;
+            elementsLeft = size;
+        }
+
+        public boolean hasNext() {
+            return elementsLeft > 0;
+        }
+
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            T returnItem = items[currentPos];
+            if (returnItem == null) {
+                throw new IllegalStateException("Unexpected null element at position " + currentPos);
+            }
+            currentPos = (currentPos + 1) % items.length;
+            elementsLeft--;
+            return returnItem;
+        }
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof ArrayDeque)) {
+            return false;
+        }
+
+        @SuppressWarnings("unchecked") // Safe due to instanceof check
+        ArrayDeque<?> oo = (ArrayDeque<?>) o; // Use wildcard for type safety
+
+        if (this.size() != oo.size()) {
+            return false;
+        }
+
+        Iterator<T> thisIter = this.iterator();
+        Iterator<?> ooIter = oo.iterator();
+
+        while (thisIter.hasNext() && ooIter.hasNext()) {
+            T thisItem = thisIter.next();
+            Object ooItem = ooIter.next();
+            if (thisItem == null) {
+                if (ooItem != null) {
+                    return false;
+                }
+            } else if (!thisItem.equals(ooItem)) {
+                return false;
+            }
+        }
+
+        // Ensure both iterators are exhausted (same number of elements)
+        return !thisIter.hasNext() && !ooIter.hasNext();
+    }
 }

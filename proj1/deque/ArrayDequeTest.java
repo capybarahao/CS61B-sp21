@@ -169,4 +169,35 @@ public class ArrayDequeTest {
         assertEquals("Should be 6", second, ad1.get(0));
 
     }
+    @Test
+    public void iteratorTest() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        for (int i = 0; i < 50; i++) {
+            ad1.addLast(i);
+        }
+        // First, test iteration
+        int expected = 0;
+        for (int i : ad1) {
+            assertEquals("Should have the same value", expected, i);
+            expected++;
+        }
+        // Then, test removal separately
+        for (int i = 0; i < 50; i++) {
+            assertEquals("Should remove in order", i, (int)ad1.removeFirst());
+        }
+    }
+    @Test
+    public void equalsTest() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        ArrayDeque<Integer> ad2 = new ArrayDeque<>();
+        for (int i = 0; i < 50; i++) {
+            ad1.addLast(i);
+            ad2.addLast(i);
+        }
+        assertTrue(ad1.equals(ad2));
+        ad2.addLast(100); // Make them different
+        assertFalse(ad1.equals(ad2));
+    }
+
+
 }
