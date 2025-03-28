@@ -48,6 +48,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         nextLast = size;
     }
 
+    @Override
     public void addFirst(T item) {
         // resize condition
         if (size > 0 && items.length == size) {
@@ -62,6 +63,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         }
     }
 
+    @Override
     public void addLast(T item) {
         // resize condition
         if (size > 0 && items.length == size) {
@@ -76,6 +78,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     }
 
     // Returns true if deque is empty, false otherwise.
+    @Override
     public boolean isEmpty() {
         if (size == 0) {
             return true;
@@ -83,12 +86,14 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         return false;
     }
 
+    @Override
     public int size() {
         return size;
     }
 
     // Prints the items in the deque from first to last, separated by a space.
     // Once all the items have been printed, print out a new line.
+    @Override
     public void printDeque() {
         if (isEmpty()) { // Correct empty check
             System.out.print("Empty deque");
@@ -128,6 +133,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
 
     // Removes and returns the item at the front of the deque.
     // If no such item exists, returns null.
+    @Override
     public T removeFirst() {
         // empty check
         if (isEmpty()) {
@@ -149,6 +155,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
 
     // Removes and returns the item at the back of the deque.
     // If no such item exists, returns null.
+    @Override
     public T removeLast() {
         // empty check
         if (isEmpty()) {
@@ -172,6 +179,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     // Gets the item at the given index,
     // where 0 is the front, 1 is the next item, and so forth.
     // If no such item exists, returns null
+    @Override
     public T get(int index) {
         // empty check
         if (isEmpty()) {
@@ -206,6 +214,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     }
 
     /** returns an iterator (a.k.a. seer) into ME */
+    @Override
     public Iterator<T> iterator() {
         return new ADequeIterator();
     }

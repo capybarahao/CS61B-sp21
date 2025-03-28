@@ -28,6 +28,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
         size = 0;
     }
 
+    @Override
     public void addFirst(T item) {
 
         sentinel.next = new Node(sentinel, item, sentinel.next);
@@ -36,6 +37,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
 
     }
 
+    @Override
     public void addLast(T item) {
         sentinel.prev = new Node (sentinel.prev, item, sentinel);
         sentinel.prev.prev.next = sentinel.prev;
@@ -43,16 +45,18 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     }
 
     // Returns true if deque is empty, false otherwise.
+    @Override
     public boolean isEmpty() {
         return sentinel.next == sentinel;
     }
-
+    @Override
     public int size() {
         return size;
     }
 
     // Prints the items in the deque from first to last, separated by a space.
     // Once all the items have been printed, print out a new line.
+    @Override
     public void printDeque() {
         if (isEmpty()) { // Correct empty check
             System.out.print("Empty deque");
@@ -67,6 +71,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
 
     // Removes and returns the item at the front of the deque.
     // If no such item exists, returns null.
+    @Override
     public T removeFirst() {
         if (isEmpty()) { // Correct empty check
             return null;
@@ -82,6 +87,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
 
     // Removes and returns the item at the back of the deque.
     // If no such item exists, returns null.
+    @Override
     public T removeLast() {
         if (isEmpty()) { // Correct empty check
             return null;
@@ -98,6 +104,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     // Gets the item at the given index,
     // where 0 is the front, 1 is the next item, and so forth.
     // If no such item exists, returns null
+    @Override
     public T get(int index) {
         if (isEmpty()) { // Correct empty check
             return null;
@@ -122,7 +129,9 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
         return getRecursive(index - 1);
     }
 
+
     /** returns an iterator (a.k.a. seer) into ME */
+    @Override
     public Iterator<T> iterator() {
         return new LLDequeIterator();
     }
