@@ -4,14 +4,14 @@ import static java.lang.Math.abs;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
+public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
-    public T[] items;
+    private T[] items;
     private int size;
 
     // circular array
-    int nextFirst = 0;
-    int nextLast = 1;
+    private int nextFirst = 0;
+    private int nextLast = 1;
 
     // create an empty LinkedListDeque
     public ArrayDeque() {

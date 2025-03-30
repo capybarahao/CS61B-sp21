@@ -56,7 +56,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T>{
             return s1.length() - s2.length(); // Compare based on string length
         }
     }
-    public Comparator<String> getLengthComparator() {
+    private Comparator<String> getLengthComparator() {
         return new LengthComparator();
     }
 

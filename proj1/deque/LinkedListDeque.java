@@ -5,7 +5,7 @@ import java.util.Iterator;
 public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
 
     // node with double pointers
-    public class Node {
+    private class Node {
         public Node prev;
         public T item;
         public Node next;
