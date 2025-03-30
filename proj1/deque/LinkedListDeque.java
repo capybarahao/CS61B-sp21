@@ -2,14 +2,15 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
     // node with double pointers
     private class Node {
-        public Node prev;
-        public T item;
-        public Node next;
-        public Node (Node m, T i, Node n) {
+        Node prev;
+        T item;
+        Node next;
+
+        public Node(Node m, T i, Node n) {
             prev = m;
             item = i;
             next = n;
@@ -39,7 +40,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
 
     @Override
     public void addLast(T item) {
-        sentinel.prev = new Node (sentinel.prev, item, sentinel);
+        sentinel.prev = new Node(sentinel.prev, item, sentinel);
         sentinel.prev.prev.next = sentinel.prev;
         size += 1;
     }
@@ -125,7 +126,9 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     }
 
 
-    /** returns an iterator (a.k.a. seer) into ME */
+    /**
+     * returns an iterator (a.k.a. seer) into ME
+     */
     @Override
     public Iterator<T> iterator() {
         return new LLDequeIterator();
@@ -134,6 +137,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     // private class used only in method iterator()
     private class LLDequeIterator implements Iterator<T> {
         private Node wizPos;
+
         public LLDequeIterator() {
             wizPos = sentinel.next;
         }
@@ -172,10 +176,9 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
                 if (!itemoo.equals(item)) {
                     return false;
                 }
-                index ++;
+                index++;
             }
-        }
-        else {
+        } else {
             return false;
         }
 

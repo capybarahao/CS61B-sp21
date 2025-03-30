@@ -7,7 +7,9 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 
-/** Performs some basic array deque tests. */
+/**
+ * Performs some basic array deque tests.
+ */
 public class ArrayDequeTest {
     @Test
     /** Adds a few things to the list, checking isEmpty() and size() are correct,
@@ -53,6 +55,7 @@ public class ArrayDequeTest {
         assertTrue("lld1 should be empty after removal", lld1.isEmpty());
 
     }
+
     @Test
     /* addLast removeLast test */
     public void addLastRemoveLastTest() {
@@ -94,8 +97,8 @@ public class ArrayDequeTest {
     /* Check if you can create LinkedListDeques with different parameterized types*/
     public void multipleParamTest() {
 
-        ArrayDeque<String>  lld1 = new ArrayDeque<String>();
-        ArrayDeque<Double>  lld2 = new ArrayDeque<Double>();
+        ArrayDeque<String> lld1 = new ArrayDeque<String>();
+        ArrayDeque<Double> lld2 = new ArrayDeque<Double>();
         ArrayDeque<Boolean> lld3 = new ArrayDeque<Boolean>();
 
         lld1.addFirst("string");
@@ -155,6 +158,7 @@ public class ArrayDequeTest {
         assertNull("Should be null", lld1.get(3));
         assertNull("Should be null", lld1.get(-1));
     }
+
     @Test
     // Fill up , empty, fill up again
     public void fillEmptyFillTest() {
@@ -169,6 +173,7 @@ public class ArrayDequeTest {
         assertEquals("Should be 6", second, ad1.get(0));
 
     }
+
     @Test
     public void iteratorTest() {
         ArrayDeque<Integer> ad1 = new ArrayDeque<>();
@@ -183,9 +188,10 @@ public class ArrayDequeTest {
         }
         // Then, test removal separately
         for (int i = 0; i < 50; i++) {
-            assertEquals("Should remove in order", i, (int)ad1.removeFirst());
+            assertEquals("Should remove in order", i, (int) ad1.removeFirst());
         }
     }
+
     @Test
     public void equalsTest() {
         ArrayDeque<Integer> ad1 = new ArrayDeque<>();

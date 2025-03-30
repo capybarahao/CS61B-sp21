@@ -1,6 +1,7 @@
 package deque;
 
 import static java.lang.Math.abs;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -19,7 +20,10 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         size = 0;
 
     }
-    /** Resizes the underlying array to the target capacity. */
+
+    /**
+     * Resizes the underlying array to the target capacity.
+     */
     private void resize(int capacity) {
         T[] a = (T[]) new Object[capacity];
         // empty check
@@ -31,12 +35,10 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         // [ , , , ,2,2,4,5, , , ,] or [ , , , , ,2,2,4,5]  direct copy
         if (nextFirst < nextLast && abs(nextLast - nextFirst) != 1 || (nextLast == 0 && nextFirst != items.length - 1)) {
             System.arraycopy(items, nextFirst + 1, a, 0, size);
-        }
-        else {
+        } else {
             if (nextFirst == items.length - 1) { // [2,2,4,5, , , ] direct copy
                 System.arraycopy(items, 0, a, 0, size);
-            }
-            else { // [5, , , , ,2,2,4] copy two parts
+            } else { // [5, , , , ,2,2,4] copy two parts
                 int L = items.length - (nextFirst + 1);
                 System.arraycopy(items, nextFirst + 1, a, 0, L);
                 System.arraycopy(items, 0, a, L, size - L);
@@ -56,8 +58,8 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         }
 
         items[nextFirst] = item;
-        size +=1;
-        nextFirst -=1;
+        size += 1;
+        nextFirst -= 1;
         if (nextFirst < 0) { // if reach front border, point to end
             nextFirst = items.length - 1;
         }
@@ -97,15 +99,13 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             for (int i = 0; i < size; i++) {
                 System.out.print(items[indexF + i] + " ");
             }
-        }
-        else {
+        } else {
             if (nextFirst == items.length - 1) { // [2,2,4,5, , , ]
                 indexF = 0;
                 for (int i = 0; i < size; i++) {
                     System.out.print(items[indexF + i] + " ");
                 }
-            }
-            else { // [5, , , , ,2,2,4]
+            } else { // [5, , , , ,2,2,4]
                 // [0,1,2,3,4,5,6,7,8]
                 // [3,4, , , , ,0,1,2]
                 indexF = nextFirst + 1;
@@ -184,19 +184,16 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         // [3,4, , , , ,0,1,2]
         // in situation where actual items[] is like:
         // [ , , , ,2,2,4,5, , , ,] or [ , , , , ,2,2,4,5]
-        if (nextFirst < nextLast && abs(nextLast - nextFirst) != 1 || (nextLast == 0 && nextFirst != items.length - 1)){
+        if (nextFirst < nextLast && abs(nextLast - nextFirst) != 1 || (nextLast == 0 && nextFirst != items.length - 1)) {
             return items[nextFirst + 1 + index];
-        }
-        else {
+        } else {
             if (nextFirst == items.length - 1) { // [2,2,4,5, , , ]
                 return items[index];
-            }
-            else { // [5, , , , ,2,2,4]
+            } else { // [5, , , , ,2,2,4]
                 int L;
                 if (nextFirst + 1 + index >= items.length) {
                     L = nextFirst + 1 + index - items.length;
-                }
-                else {
+                } else {
                     L = nextFirst + 1 + index;
                 }
                 return items[L];
@@ -204,7 +201,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         }
     }
 
-    /** returns an iterator (a.k.a. seer) into ME */
+    /**
+     * returns an iterator (a.k.a. seer) into ME
+     */
     @Override
     public Iterator<T> iterator() {
         return new ADequeIterator();
@@ -237,6 +236,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             return returnItem;
         }
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
