@@ -18,11 +18,12 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
-                                            //      function in Utils
+    // TODO Hint: look at the `join`
+    //      function in Utils
+    static final File CAPERS_FOLDER = new File(".capers");
 
     /**
-     * Does required filesystem operations to allow for persistence.
+     * Does require filesystem operations to allow for persistence.
      * (creates any necessary folders or files)
      * Remember: recommended structure (you do not have to follow):
      *
@@ -32,6 +33,9 @@ public class CapersRepository {
      */
     public static void setupPersistence() {
         // TODO
+        CAPERS_FOLDER.mkdir();
+        Dog.DOG_FOLDER.mkdir();
+        File story = new File("story.txt");
     }
 
     /**
