@@ -1,6 +1,8 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
+
 import static capers.Utils.*;
 
 /** A repository for Capers 
@@ -31,11 +33,12 @@ public class CapersRepository {
      *    - dogs/ -- folder containing all of the persistent data for dogs
      *    - story -- file containing the current story
      */
-    public static void setupPersistence() {
+    public static void setupPersistence() throws IOException {
         // TODO
         CAPERS_FOLDER.mkdir();
         Dog.DOG_FOLDER.mkdir();
-        File story = new File("story.txt");
+        File story = new File(".capers/story.txt");
+        story.createNewFile();
     }
 
     /**
@@ -45,6 +48,10 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         // TODO
+        File outFile = new File(".capers/story.txt");
+        String prevText = readContentsAsString(outFile);
+        writeContents(outFile,prevText, text, "\n");
+        System.out.println(prevText + text);
     }
 
     /**
@@ -54,6 +61,10 @@ public class CapersRepository {
      */
     public static void makeDog(String name, String breed, int age) {
         // TODO
+        Dog newDog = new Dog(name,breed,age);
+        newDog.saveDog();
+
+
     }
 
     /**
@@ -64,5 +75,8 @@ public class CapersRepository {
      */
     public static void celebrateBirthday(String name) {
         // TODO
+        Dog bDog = Dog.fromFile(name);
+        assert bDog != null;
+        bDog.haveBirthday();
     }
 }
