@@ -6,7 +6,7 @@ import java.io.IOException;
 import static capers.Utils.*;
 
 /** A repository for Capers 
- * @author TODO
+ * @author Qiyue
  * The structure of a Capers Repository is as follows:
  *
  * .capers/ -- top level folder for all persistent data in your lab12 folder
@@ -37,7 +37,7 @@ public class CapersRepository {
         // TODO
         CAPERS_FOLDER.mkdir();
         Dog.DOG_FOLDER.mkdir();
-        File story = new File(".capers/story.txt");
+        File story = Utils.join(".capers", "story.txt");
         story.createNewFile();
     }
 
@@ -48,7 +48,7 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         // TODO
-        File outFile = new File(".capers/story.txt");
+        File outFile = Utils.join(".capers", "story.txt");
         String prevText = readContentsAsString(outFile);
         writeContents(outFile,prevText, text, "\n");
         System.out.println(prevText + text);
@@ -59,12 +59,11 @@ public class CapersRepository {
      * three non-command arguments of args (name, breed, age).
      * Also prints out the dog's information using toString().
      */
-    public static void makeDog(String name, String breed, int age) {
+    public static void makeDog(String name, String breed, int age) throws IOException {
         // TODO
         Dog newDog = new Dog(name,breed,age);
         newDog.saveDog();
-
-
+        System.out.println(newDog.toString());
     }
 
     /**
@@ -78,5 +77,7 @@ public class CapersRepository {
         Dog bDog = Dog.fromFile(name);
         assert bDog != null;
         bDog.haveBirthday();
+        File updateFile = Utils.join(".capers", "dogs", name);
+        writeObject(updateFile, bDog);
     }
 }
