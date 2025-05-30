@@ -35,7 +35,20 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
     /* Inserts the key-value pair of KEY and VALUE into this dictionary,
      *  replacing the previous value associated to KEY, if any. */
     public void put(K ik, V iv) {
-        this.put(ik, iv, node);
+        if (node != null) {
+            BSTNode lookup = node.get(ik);
+            if (lookup == null) {
+                node = put(ik, iv, node);
+                size = size + 1;
+            }
+            else {
+                lookup.val = iv;
+            }
+        }
+        else { // Create a node as root
+            node = put(ik, iv, null);
+            size = size + 1;
+        }
     }
 
     private BSTNode put(K ik, V iv, BSTNode n) {
@@ -49,18 +62,29 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
         else if (cmp > 0) {
             n.right = put(ik, iv, n.right);
         }
-        size = size + 1;
         return n;
     }
 
     @Override
-    public boolean containsKey(K key) {
-        return false;
+    public boolean containsKey(K sk) {
+        if (node == null) {
+            return false;
+        }
+        return node.get(sk) != null;
     }
 
     // prints out BSTMap in order of increasing Key
     public void printInOrder() {
+        printInOrder(node);
+    }
 
+    private void printInOrder(BSTNode n) {
+        if (n == null) {
+            return;
+        }
+        printInOrder(n.left);
+        System.out.println(n.key);
+        printInOrder(n.right);
     }
 
     @Override
@@ -105,10 +129,16 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
                 return this;
             }
             else if (sk.compareTo(this.key) < 0) {
-                return left.get(sk);
+                if (this.left == null) {
+                    return null;
+                }
+                return this.left.get(sk);
             }
             else if (sk.compareTo(this.key) > 0) {
-                return right.get(sk);
+                if (this.right == null) {
+                    return null;
+                }
+                return this.right.get(sk);
             }
             return null;
         }

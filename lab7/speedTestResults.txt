@@ -1,0 +1,43 @@
+Enter # strings to insert into the maps: 10000
+class bstmap.ULLMap: 0.17 sec
+class bstmap.BSTMap: 0.01 sec
+Java's Built-in TreeMap: 0.01 sec
+Java's Built-in HashMap: 0.01 sec
+
+Enter # strings to insert into the maps: 341144
+--Stack Overflow -- couldn't add 341144 strings of length 49.
+class bstmap.BSTMap: 0.38 sec
+Java's Built-in TreeMap: 0.29 sec
+Java's Built-in HashMap: 0.16 sec
+Would you like to try more timed-tests? (y/n)
+
+_________
+This program inserts lexicographically increasing Strings into Maps as <String, Integer> pairs.
+
+Enter # strings to insert into the maps: 31434
+class bstmap.ULLMap: 2.77 sec
+--Stack Overflow -- couldn't add 31434 strings.
+Java's Built-in TreeMap: 0.02 sec
+Java's Built-in HashMap: 0.01 sec
+Would you like to try more timed-tests? (y/n): y
+
+Enter # strings to insert into the maps: 10000
+class bstmap.ULLMap: 0.17 sec
+class bstmap.BSTMap: 0.57 sec
+Java's Built-in TreeMap: 0.00 sec
+Java's Built-in HashMap: 0.00 sec
+Would you like to try more timed-tests? (y/n): y
+
+Enter # strings to insert into the maps: 414535
+--Stack Overflow -- couldn't add 414535 strings.
+--Stack Overflow -- couldn't add 414535 strings.
+Java's Built-in TreeMap: 0.12 sec
+Java's Built-in HashMap: 0.05 sec
+Would you like to try more timed-tests? (y/n): y
+
+Enter # strings to insert into the maps: 41343
+class bstmap.ULLMap: 6.20 sec
+--Stack Overflow -- couldn't add 41343 strings.
+Java's Built-in TreeMap: 0.01 sec
+Java's Built-in HashMap: 0.02 sec
+Would you like to try more timed-tests? (y/n):
