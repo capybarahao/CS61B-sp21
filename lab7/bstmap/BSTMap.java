@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
 
-    int size = 0;
+    private int size = 0;
 
     @Override
     public void clear() {
