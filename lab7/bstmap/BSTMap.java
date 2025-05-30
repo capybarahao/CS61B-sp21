@@ -10,22 +10,47 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
 
     @Override
     public void clear() {
-
+        size = 0;
+        node = null;
     }
 
     @Override
-    public V get(K key) {
-        return null;
+    public V get(K sk) {
+        if (node == null) {
+            return null;
+        }
+        BSTNode lookup = node.get(sk);
+        if (lookup == null) {
+            return null;
+        }
+        return lookup.val;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
-    public void put(K key, V value) {
+    /* Inserts the key-value pair of KEY and VALUE into this dictionary,
+     *  replacing the previous value associated to KEY, if any. */
+    public void put(K ik, V iv) {
+        this.put(ik, iv, node);
+    }
 
+    private BSTNode put(K ik, V iv, BSTNode n) {
+        if (n == null) {
+            return new BSTNode(ik, iv, null, null);
+        }
+        int cmp = ik.compareTo(n.key);
+        if (cmp < 0) {
+            n.left = put(ik, iv, n.left);
+        }
+        else if (cmp > 0) {
+            n.right = put(ik, iv, n.right);
+        }
+        size = size + 1;
+        return n;
     }
 
     @Override
