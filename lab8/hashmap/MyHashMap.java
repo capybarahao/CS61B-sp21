@@ -59,7 +59,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         findNode(key).value = value;
     }
 
-    public void resize() {
+    private void resize() {
         int newBktSize = bktSize * 2;
         Collection[] newBuckets = new Collection[newBktSize];
         for (int i = 0; i < newBktSize; i++) {
