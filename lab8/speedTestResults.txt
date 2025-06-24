@@ -1,0 +1,81 @@
+
+InsertRandomSpeedTest
+
+Enter # strings to insert into hashmap.ULLMap: 2
+class hashmap.ULLMap: 0.00 sec
+
+Enter # strings to insert into your hashmap.MyHashMap: 2000000
+class hashmap.MyHashMap: 1.12 sec
+
+Enter # strings to insert into Java's HashMap: 2000000
+Java's Built-in HashMap: 0.47 sec
+
+Enter # strings to insert into hashmap.ULLMap: 2
+class hashmap.ULLMap: 0.00 sec
+
+Enter # strings to insert into your hashmap.MyHashMap: 20000000
+class hashmap.MyHashMap: 15.47 sec
+
+Enter # strings to insert into Java's HashMap: 20000000
+Java's Built-in HashMap: 5.28 sec
+------------------------------------------------------------
+InsertInOrderSpeedTest
+
+Enter # strings to insert into hashmap.ULLMap: 2000000
+--Stack Overflow -- couldn't add 2000000 strings.
+
+Enter # strings to insert into hashmap.MyHashMap: 2000000
+class hashmap.MyHashMap: 0.58 sec
+
+Enter # strings to insert into Java's HashMap: 2000000
+Java's Built-in HashMap: 1.08 sec
+
+Enter # strings to insert into hashmap.ULLMap: 2000
+class hashmap.ULLMap: 0.02 sec
+
+Enter # strings to insert into hashmap.MyHashMap: 20000000
+class hashmap.MyHashMap: 4.86 sec
+
+Enter # strings to insert into Java's HashMap: 20000000
+Java's Built-in HashMap: 2.61 sec
+
+__________________________________________________
+HashMap slower to built in solution in random.
+HashMap similar to built in solution in order.
+The reason normal HashMap solution is very much the same in performance with builtin solution,
+is that when inserted in order, the hashcode function always ensures data randomly distributed,
+thus both achieve O(1) result.
+
+When would it be better to use a BSTMap/TreeMap instead of a HashMap?
+
+in short, when need ordered / sorted keys, use TreeMap
+HashMao when i need QUICK stuff in large data set.
+________________________________________________
+BucketsSpeedTest
+
+MyHashMapALBuckets, which uses ArrayList buckets
+MyHashMapLLBuckets, which uses LinkedList buckets
+MyHashMapTSBuckets, which uses TreeSet buckets
+MyHashMapPQBuckets, which uses PriorityQueue buckets
+MyHashMapHSBuckets, which uses HashSet buckets
+
+Enter # strings to insert into each map: 1000000
+class hashmap.MyHashMapALBuckets: 0.86 sec
+class hashmap.MyHashMapLLBuckets: 0.78 sec
+class hashmap.MyHashMapTSBuckets: 1.16 sec
+class hashmap.MyHashMapHSBuckets: 1.24 sec
+class hashmap.MyHashMapPQBuckets: 0.68 sec
+
+Would you like to try more timed-tests? (y/n)y
+
+Enter # strings to insert into each map: 20000000
+class hashmap.MyHashMapALBuckets: 15.47 sec
+class hashmap.MyHashMapLLBuckets: 17.35 sec
+class hashmap.MyHashMapTSBuckets: 41.84 sec
+class hashmap.MyHashMapHSBuckets: 29.21 sec
+class hashmap.MyHashMapPQBuckets: 25.31 sec
+
+Would you like to try more timed-tests? (y/n)
+
+MyHashMapTSBuckets and MyHashMapHSBuckets takes too much time and they have potential
+to O(log n) for treeset and O(1) for hashset.
