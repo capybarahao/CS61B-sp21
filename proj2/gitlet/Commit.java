@@ -21,6 +21,13 @@ public class Commit {
 
     /** The message of this Commit. */
     private String message;
+    private String timestamp;
+    // parent of this commit, can have two parents.
+    private Commit parent;
 
     /* TODO: fill in the rest of this class. */
+    public Commit (String message, Commit parent) {
+        this.message = message;
+        this.parent = parent;
+    }
 }
