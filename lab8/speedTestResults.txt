@@ -40,11 +40,15 @@ Enter # strings to insert into Java's HashMap: 20000000
 Java's Built-in HashMap: 2.61 sec
 
 __________________________________________________
-HashMap slower to built in solution in random.
-HashMap similar to built in solution in order.
-The reason normal HashMap solution is very much the same in performance with builtin solution,
-is that when inserted in order, the hashcode function always ensures data randomly distributed,
-thus both achieve O(1) result.
+HashMap slower to built in solution in random insertion.
+HashMap similar to built in solution in ordered insertion.
+Why, when inserted in order, normal HashMap solution is similar to builtin solution(means it's good):
+hashcode function always ensures data randomly distributed,
+make the SEARCH (the right place to put data in)faster, thus let insert faster.
+Achieve Big O(1) result.
+the SEARCH would be slow for tree as the ordered insertion makes a normal tree very spindly!
+(Fortunately, Java's TreeMap uses a Red-Black Tree, which automatically rebalances itself after each insertion or deletion
+to maintain a height of O(log n).)
 
 When would it be better to use a BSTMap/TreeMap instead of a HashMap?
 
