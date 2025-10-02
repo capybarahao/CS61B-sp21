@@ -85,7 +85,7 @@ public class Repository {
         INDEX.createNewFile();
         // set head to master branch "heads/master"
         String branchName = "master";
-        String headRef = "heads" + System.getProperty("file.separator") + branchName;
+        String headRef = "heads" + File.separator + branchName;
         writeContents(HEAD, headRef);
 
         // create initial commit
@@ -445,7 +445,7 @@ public class Repository {
         writeObject(INDEX, index);
 
         // set target branch as current branch "heads/branchName"
-        String headRef = "heads" + System.getProperty("file.separator") + targetBranch;
+        String headRef = "heads" + File.separator + targetBranch;
         writeContents(HEAD, headRef);
 
     }
