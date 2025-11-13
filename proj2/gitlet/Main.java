@@ -46,12 +46,12 @@ public class Main {
                 validateRepo();
                 // Every commit must have a non-blank message.
                 //  If it doesn’t, print the error message Please enter a commit message.
-                if (args.length == 1) {
+                if (args.length == 1 || args[1].trim().isEmpty()) {
                     Utils.message("Please enter a commit message.");
                     System.exit(0);
                 }
                 validateNumArgs(args, 2);
-                Repository.commit(args[1]);
+                Repository.commit(args[1], null);
                 break;
             case "rm":
                 validateRepo();
@@ -122,7 +122,11 @@ public class Main {
                 validateNumArgs(args, 2);
                 Repository.reset(args[1]);
                 break;
-
+            case "merge":
+                validateRepo();
+                validateNumArgs(args, 2);
+                Repository.merge(args[1]);
+                break;
 
             // If a user inputs a command that doesn’t exist, print the message
             // No command with that name exists.

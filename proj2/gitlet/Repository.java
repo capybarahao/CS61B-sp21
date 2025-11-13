@@ -2,12 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -159,7 +155,7 @@ public class Repository {
     // Finally, files tracked in the current commit may be untracked in the new commit
     // as a result being staged for removal by the rm command (below).
 
-    public static void commit(String msg) throws IOException {
+    public static void commit(String msg, String mergedHead) throws IOException {
         // If no files have been staged, abort. (meaning index = fileToAdd?)
         // Print the message No changes added to the commit.
         Commit cmt = getCommit(getHead());
@@ -185,8 +181,11 @@ public class Repository {
         // update the parent ref (add this commit to the commit tree)
         String cmtHash = getHead();
         cmt.setParentA(cmtHash);
+        if (mergedHead != null) { // it's a merged commit. called from merge method
+            cmt.setParentB(mergedHead);
+        }
         // update metadata: message, timestamp
-        cmt.setTimestamp(formattedNowTime());
+        cmt.setTimestamp();
         cmt.setMessage(msg);
         // generate hash for this commit. no more changes to this cmt object from now
         cmtHash = sha1(serialize(cmt));
@@ -255,7 +254,7 @@ public class Repository {
                 System.out.printf("Merge: %s %s%n",p.getParentA().substring(0,7), p.getParentB().substring(0,7));
             }
 
-            System.out.printf("Date: %s%n", p.getTimestamp());
+            System.out.printf("Date: %s%n", p.getTimestampString());
             System.out.println(p.getMessage());
             System.out.println();
             cmtHash = p.getParentA();
@@ -268,7 +267,7 @@ public class Repository {
     }
 
     public static void global_log() {
-        List<String> cmtFiles = Utils.plainFilenamesIn(CMTS_DIR);
+        List<String> cmtFiles = plainFilenamesIn(CMTS_DIR);
         for (String cmt: cmtFiles) {
             Commit p = getCommit(cmt);
 
@@ -283,14 +282,14 @@ public class Repository {
                 System.out.printf("Merge: %s %s%n",p.getParentA().substring(0,7), p.getParentB().substring(0,7));
             }
 
-            System.out.printf("Date: %s%n", p.getTimestamp());
+            System.out.printf("Date: %s%n", p.getTimestampString());
             System.out.println(p.getMessage());
             System.out.println();
         }
     }
 
     public static void find(String msg) {
-        List<String> cmtFiles = Utils.plainFilenamesIn(CMTS_DIR);
+        List<String> cmtFiles = plainFilenamesIn(CMTS_DIR);
         Commit p = null;
         boolean found = false;
         for (String cmt: cmtFiles) {
@@ -319,7 +318,7 @@ public class Repository {
 
     public static void status() {
         System.out.println("=== Branches ===");
-        List<String> branches = Utils.plainFilenamesIn(HEADS_DIR);
+        List<String> branches = plainFilenamesIn(HEADS_DIR);
         String curBranch = readContentsAsString(HEAD).substring(6);
 
         // Sort the list in lexicographical order
@@ -434,7 +433,7 @@ public class Repository {
         for (String fileName: curBranchCmt.fileToBlob.keySet()) {
             if (workingDirFilesList.contains(fileName) && !targetBranchCmt.fileToBlob.containsKey(fileName)) {
                 File fileToBeDel = join(CWD, fileName);
-                fileToBeDel.delete();
+                restrictedDelete(fileToBeDel);
             }
         }
 
@@ -477,7 +476,7 @@ public class Repository {
             System.exit(0);
         }
 
-        branchFile.delete();
+        restrictedDelete(branchFile);
 
     }
 
@@ -514,7 +513,7 @@ public class Repository {
         for (String fileName: curHeadCmt.fileToBlob.keySet()) {
             if (workingDirFilesList.contains(fileName) && !targetCmt.fileToBlob.containsKey(fileName)) {
                 File fileToBeDel = join(CWD, fileName);
-                fileToBeDel.delete();
+                restrictedDelete(fileToBeDel);
             }
         }
 
@@ -531,13 +530,225 @@ public class Repository {
         setHeadTo(cmtID);
     }
 
+    public static void merge(String givenBranch) throws IOException {
+
+        TreeMap<String, String> index = readIndex();
+        String curCmtHash = getHead();
+        Commit curCmt = getCommit(curCmtHash);
+
+        // Failure cases, before ANYTHING
+
+        // If there are staged additions or removals present, print the error message
+        // You have uncommitted changes.
+        // and exit
+        if (!curCmt.fileToBlob.equals(index)) {
+            message("You have uncommitted changes.");
+            System.exit(0);
+        }
+
+        // If a branch with the given name does not exist, print the error message
+        // A branch with that name does not exist.
+        File branchFile = join(HEADS_DIR, givenBranch);
+        if (!branchFile.exists()) {
+            message("A branch with that name does not exist.");
+            System.exit(0);
+        }
+
+        // If attempting to merge a branch with itself, print the error message
+        // Cannot merge a branch with itself.
+        String curBranch = readContentsAsString(HEAD).substring(6);
+        if (curBranch.equals(givenBranch)) {
+            message("Cannot merge a branch with itself.");
+            System.exit(0);
+        }
+
+        // get the given branch head
+        String givenCmtHash = readContentsAsString(branchFile);
+        Commit givenCmt = getCommit(givenCmtHash);
+        // get the split point commit
+        String spCmtHash = getSplitPointCmt(givenBranch);
+        Commit spCmt = getCommit(spCmtHash);
+
+        // Failure case: If merge would generate an error because the commit that it does has no changes in it,
+        // just let the normal commit error message for this go through
+        // no to do
+
+
+        // If the split point is the same commit as the given branch, then we do nothing;
+        // the merge is complete, and the operation ends with the message
+        // Given branch is an ancestor of the current branch.
+        if (spCmtHash.equals(givenCmtHash)) {
+            message("Given branch is an ancestor of the current branch.");
+            System.exit(0);
+        }
+
+        // If the split point is the current branch, then the effect is to check out the given branch,
+        // and the operation ends after printing the message
+        // Current branch fast-forwarded.
+        if (spCmtHash.equals(curCmtHash)) {
+            checkoutBranch(givenBranch);
+            message("Current branch fast-forwarded.");
+            System.exit(0);
+        }
+
+        // Failure case: If an untracked file in the current commit would be overwritten or deleted by the merge, print
+        // There is an untracked file in the way; delete it, or add and commit it first.
+        // This case is positioned here bc The untracked-file check is only needed when
+        // about to modify the CWD
+
+        // below is very similar code to checkout branch
+        List<String> workingDirFilesList = plainFilenamesIn(CWD);
+        for (String fileName: workingDirFilesList) {
+            if (!curCmt.fileToBlob.containsKey(fileName) && givenCmt.fileToBlob.containsKey(fileName)) {
+                message("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+        }
+
+
+        // !! Now do a new commit, change file contents in CWD as well
+        // remember the core of 3 way merge: Apply the changes made in given (since split) onto current.
+
+        // Create a big set including all files related, so that all edge cases being handled
+        Set<String> allFiles= new HashSet<>();
+        allFiles.addAll(givenCmt.fileToBlob.keySet());
+        allFiles.addAll(curCmt.fileToBlob.keySet());
+        allFiles.addAll(spCmt.fileToBlob.keySet());
+
+        boolean conflicted = false;
+
+        for (String file : allFiles) {
+            String givenBlobHash = givenCmt.fileToBlob.get(file);
+            String curBlobHash = curCmt.fileToBlob.get(file);
+            String spBlobHash = spCmt.fileToBlob.get(file);
+
+            if (spBlobHash != null) {
+                if (givenBlobHash != null) {
+                    // 1. modified in the given branch since the split point, but not modified in the current branch since the split point
+                    // changed to  version in the given branch, then all be automatically staged
+                    if (!Objects.equals(spBlobHash, givenBlobHash) && Objects.equals(spBlobHash, curBlobHash)) {
+                        writeCmtFileToCWD(givenCmt, file);
+                        index.put(file, givenBlobHash);
+                        continue;
+                    }
+                    // 7. present at the split point, unmodified in the given branch, and absent in the current branch
+                    // should remain absent.
+                    if (curBlobHash == null && Objects.equals(spBlobHash, givenBlobHash)) {
+                        continue;
+                    }
+                    // if file present in three commits.
+                    if (curBlobHash != null && Objects.equals(spBlobHash, curBlobHash) && Objects.equals(spBlobHash, givenBlobHash)) {
+                        continue;
+                    }
+                }
+                else { // given == null
+                    // 6. present at the split point, unmodified in the current branch, and absent in the given branch
+                    // should be removed (and untracked).
+                    if (Objects.equals(spBlobHash, curBlobHash)) {
+                        File fileToBeDel = join(CWD, file);
+                        restrictedDelete(fileToBeDel);
+                        index.remove(file);
+                        continue;
+                    }
+                }
+
+                // 2. modified in the current branch but not in the given branch since the split point
+                // should stay as they are.
+                if (curBlobHash != null && givenBlobHash != null &&
+                        !Objects.equals(spBlobHash, curBlobHash) && Objects.equals(spBlobHash, givenBlobHash)) {
+                    continue;
+                }
+
+                // 3. modified in both the current and given branch in the same way
+                // (i.e., both files now have the same content or were both removed)
+                // left unchanged by the merge.
+                if (!Objects.equals(spBlobHash, givenBlobHash) && Objects.equals(givenBlobHash, curBlobHash)) {
+                    continue;
+                }
+            }
+            else { // spBlobHash == null
+                // 4. not present at the split point and are present only in the current branch
+                // should remain as they are.
+                if (givenBlobHash == null) {
+                    continue;
+                }
+                // 5. not present at the split point and are present only in the given branch
+                // should be checked out and staged.
+                if (curBlobHash == null) {
+                    writeCmtFileToCWD(givenCmt, file);
+                    index.put(file, givenBlobHash);
+                    continue;
+                }
+            }
+
+            // if none of above satisfied then it's a conflict file
+            // modified in different ways in the current and given branches are in conflict.
+            // “Modified in different ways” can mean that the contents of both are changed and different from other,
+            // or the contents of one are changed and the other file is deleted,
+            // or the file was absent at the split point and has different contents in the given and current branches.
+            // replace the contents of the conflicted file with
+            //<<<<<<< HEAD
+            //contents of file in current branch
+            //=======
+            //contents of file in given branch
+            //>>>>>>>
+
+            // get the file contents of cur and given
+            String curContents = null;
+            String givenContents = null;
+            if (curBlobHash == null) {
+                curContents = null;
+                File givenBlobFile = join(BLOBS_DIR,givenBlobHash);
+                givenContents = readContentsAsString(givenBlobFile);
+            }
+            else if (givenBlobHash == null) {
+                givenContents = null;
+                File curBlobFile = join(BLOBS_DIR,curBlobHash);
+                curContents = readContentsAsString(curBlobFile);
+            }
+            else {
+                File curBlobFile = join(BLOBS_DIR,curBlobHash);
+                curContents = readContentsAsString(curBlobFile);
+
+                File givenBlobFile = join(BLOBS_DIR,givenBlobHash);
+                givenContents = readContentsAsString(givenBlobFile);
+            }
+
+
+            // new file contents
+            String newFileContents = "<<<<<<< HEAD\n" + curContents + "=======\n" + givenContents +">>>>>>>\n";
+
+            // overwrite / create file with conflict, in CWD
+            File workingFile = join(CWD, file);
+            if (!workingFile.exists()) {
+                workingFile.createNewFile();
+            }
+            writeContents(workingFile, newFileContents);
+
+            // write it as blob
+            String newBlobHash = writeBlobObj(file);
+
+            //
+            index.put(file, newBlobHash);
+            conflicted = true;
+        }
+
+        // write index object.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        writeObject(INDEX, index);
+
+        String msg = "Merged " + givenBranch + " into " + curBranch + ".";
+        commit(msg, givenCmtHash);
+
+        if (conflicted) {
+            message("Encountered a merge conflict.");
+        }
+
+    }
 
 
 
 
-
-
-
+// -----------------------------------------------------------------------------------------------------------
 
 
     /**
@@ -587,24 +798,6 @@ public class Repository {
     }
 
     /**
-     * @return true if the working file content identical to its version in current commit.
-     */
-    static Boolean fileEqualsCurCmt(String fileName) {
-
-        File fileToAdd = join(CWD, fileName);
-        String fileHash = sha1(readContents(fileToAdd));
-        // read current commit obj version of this file's sha1
-        Commit curCommit = getCommit(getHead());
-        String curCmtFileSha = curCommit.fileToBlob.get(fileName);
-
-        boolean fileEqualsCurCmt = false;
-        if (curCmtFileSha != null && curCmtFileSha.equals(fileHash)) {
-            fileEqualsCurCmt = true;
-        }
-        return fileEqualsCurCmt;
-    }
-
-    /**
      * This sets head pointer(of current branch) to provided commit.
      * @param cmtHash commit's hash.
      *
@@ -625,15 +818,6 @@ public class Repository {
         writeObject(commitObjFile, cmt);
     }
 
-    static String formattedNowTime() {
-
-        DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("EEE MMM dd HH:mm:ss yyyy Z")
-                .withZone(ZoneId.of("Asia/Shanghai"));
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
-        return formatter.format(now).toString();
-    }
-
 
     // this assumes cmt contains that file
     // if file already exists, overwrite it
@@ -650,4 +834,78 @@ public class Repository {
         }
         writeContents(workingFile, readContentsAsString(blobFile));
     }
+
+    /**
+     * return the split point cmt hash.
+     * The split point is the LATEST common ancestor of the current and given branch heads
+     * @param branchName target branch name.
+     */
+    static String getSplitPointCmt(String branchName) {
+        // do Reverse BFS / DFS for both nodes, get two ancestors group.
+        // then find all common ancestors, then find the last one.
+        //
+        String curCmtHash = getHead();
+        String branchCmtHash = readContentsAsString(join(HEADS_DIR, branchName));
+        // get ancestors of both branch
+        Set<String> curAncestors = getAncestors(curCmtHash);
+        Set<String> bAncestors = getAncestors(branchCmtHash);
+        // get common ancestors among two sets
+        Set<String> common = new HashSet<>(curAncestors);
+        common.retainAll(bAncestors);
+
+        // find the latest common ancestor, by timestamp!!!!!!
+        // definition: A latest common ancestor is a common ancestor that is not an ancestor of any other common ancestor
+
+        String latestCmtHash = null;
+        ZonedDateTime latestTime = null;
+        for (String cmtHash : common) {
+            Commit c = getCommit(cmtHash);
+            ZonedDateTime time = c.getTimestamp();
+            if (latestTime == null || time.isAfter(latestTime)) {
+                latestTime = time;
+                latestCmtHash = cmtHash;
+            }
+        }
+
+        return latestCmtHash;
+    }
+    /**
+     * return the commit's all ancestors.
+     * INCLUDING the commit itself.
+     *
+     * @param cmtHash commit's hash.
+     * @return a set of cmt hash, including this commit's all ancestors, and the commit itself.
+     */
+    static Set<String> getAncestors(String cmtHash) {
+        Commit curCmt = getCommit(cmtHash);
+        // 1. make a Set to store visited ancestors
+        Set<String> acsts = new HashSet<>();
+        acsts.add(cmtHash);
+        // 2. make a Stack (or Deque) for traversal
+        Stack<String> fringe = new Stack<>();
+        // 3. push the starting commit
+        fringe.push(cmtHash);
+        // 4. while stack not empty:
+        while (!fringe.empty()) {
+            // pop one commit
+            String sHash = fringe.pop();
+            // look up its parents from the map
+            Set<String> parents = getCommit(sHash).getParents();
+            if (parents != null) { // have at least one parent
+                // for each parent
+                for (String p : parents) {
+                    // if not seen before:
+                    if (!acsts.contains(p)) {
+                        // add to ancestors
+                        // push parent into stack
+                        acsts.add(p);
+                        fringe.push(p);
+                    }
+                }
+            }
+        }
+        // 5. return the set of ancestors
+        return acsts;
+    }
+
 }
