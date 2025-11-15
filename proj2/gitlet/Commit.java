@@ -37,7 +37,7 @@ public class Commit implements Serializable {
     // Use: put(K, V), get(K)
     Map<String, String> fileToBlob = new TreeMap<>();
 
-    public Commit(String message, String parentA, String parentB) {
+    public Commit (String message, String parentA, String parentB) {
         this.message = message;
         this.parentA = parentA;
         this.parentB = parentB;
