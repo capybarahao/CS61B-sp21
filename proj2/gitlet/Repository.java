@@ -9,14 +9,12 @@ import static gitlet.Utils.*;
 
 
 /** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
  *  @author Qiyue Hao
  */
 public class Repository {
     /**
-     * TODO: add instance variables here.
      *
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
@@ -25,15 +23,15 @@ public class Repository {
 
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    //    .gitlet/ -- top level folder for all persistent data
-    //      - heads/ -- folder containing branch file
-    //          - master -- file containing this branch's head commit id
-    //          - anotherBranch
-    //      - objects/ -- folder containing blob and commit files
-    //          - commits  -- folder
-    //          - blobs -- folder
-    //      - HEAD -- file containing ref to heads folder's branch file "heads/master"
-    //      - INDEX -- file of staging area
+//        .gitlet/ -- top level folder for all persistent data
+//          - heads/ -- folder containing branch file
+//              - master -- file containing this branch's head commit id
+//              - anotherBranch
+//          - objects/ -- folder containing blob and commit files
+//              - commits  -- folder
+//              - blobs -- folder
+//          - HEAD -- file containing ref to heads folder's branch file "heads/master"
+//          - INDEX -- file of staging area
 
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
@@ -156,11 +154,12 @@ public class Repository {
     // as a result being staged for removal by the rm command (below).
 
     public static void commit(String msg, String mergedHead) throws IOException {
-        // If no files have been staged, abort. (meaning index = fileToAdd?)
-        // Print the message No changes added to the commit.
+
         Commit cmt = getCommit(getHead());
         TreeMap<String, String> index = readIndex();
 
+        // If no files have been staged, abort. (meaning index = fileToAdd?)
+        // Print the message No changes added to the commit.
         if (cmt.fileToBlob.equals(index)) {
             message("No changes added to the commit.");
             System.exit(0);
@@ -231,6 +230,8 @@ public class Repository {
 
     }
 
+    // following the first parent commit links, ignoring any second parents found in merge commits.
+    // (In regular Git, this is what you get with git log --first-parent)
     public static void log() {
         String cmtHash = getHead();
         Commit p = getCommit(cmtHash);
@@ -241,7 +242,6 @@ public class Repository {
             System.out.printf("commit %s%n", cmtHash);
             // if a merged commit print merge info line
             // "Merge: 4975af1 2c1ead1"
-            // Todo: after doing merge:
             //  The first parent is the branch you were on when you did the merge; the second is that of the merged-in branch.
 
             if (p.getParentB() != null) {
@@ -269,7 +269,6 @@ public class Repository {
             System.out.printf("commit %s%n", cmt);
             // if a merged commit print merge info line
             // "Merge: 4975af1 2c1ead1"
-            // Todo: after doing merge:
             //  The first parent is the branch you were on when you did the merge; the second is that of the merged-in branch.
 
             if (p.getParentB() != null) {
