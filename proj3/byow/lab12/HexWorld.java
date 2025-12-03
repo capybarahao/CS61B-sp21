@@ -12,4 +12,11 @@ import java.util.Random;
  * Draws a world consisting of hexagonal regions.
  */
 public class HexWorld {
+    /**
+     * adds a hexagon of side length s to a given position in the world
+     *
+     */
+    private static void addHexagon(int s) {
+        return;
+    }
 }
