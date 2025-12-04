@@ -30,8 +30,10 @@ public class HexWorld {
                 world[x][y] = Tileset.NOTHING;
             }
         }
+        // change tiletype in here
+        TETile tileType = Tileset.WALL;
 
-        addHexagon(5, world, 0, 10);
+        addHexagon(7, tileType, world, 0, 10);
 
         ter.renderFrame(world);
 
@@ -55,45 +57,38 @@ public class HexWorld {
      * hex height is exactly s * 2
      * @param X Y world position of the first character in upper row(of the center two rows)
      */
-    private static void addHexagon(int s, TETile[][] world, int X, int Y) {
-        int width = hexWidth(s);
-        int halfHeight = s;
-        for (int i = 0; i < halfHeight; i += 1) {
-            for (int j = i; j < width - i; j += 1) {
-                // top part of hex
-                world[X+j][Y+i] = Tileset.WALL;
-                // lower part of hex
-                world[X+j][Y-1-i] = Tileset.WALL;
-            }
+    private static void addHexagon(int s, TETile tileType, TETile[][] world, int X, int Y) {
+
+        List<int[]> hexPos = hexPos(s, X, Y);
+        for (int[] pos: hexPos) {
+            world[pos[0]][pos[1]] = tileType;
         }
         return;
     }
 
+    private static List<int[]> hexPos(int s, int X, int Y) {
+        int width = hexWidth(s);
+        int halfHeight = s;
+        List<int[]> hexPos = new java.util.ArrayList<>(List.of());
 
-
-    private static int hexWidth(int s) {
-        int w = (s-1) *3 +1;
-        return w;
+        for (int i = 0; i < halfHeight; i += 1) {
+            for (int j = i; j < width - i; j += 1) {
+                // top part of hex
+                int[] topPos = new int[2];
+                topPos[0] = X+j;
+                topPos[1] = Y+i;
+                hexPos.add(topPos);
+                // lower part of hex
+                int[] bottomPos = new int[2];
+                bottomPos[0] = X+j;
+                bottomPos[1] = Y-1-i;
+                hexPos.add(bottomPos);
+            }
+        }
+        return hexPos;
     }
 
-//    private static List<int[]> hexPos(int s, int X, int Y) {
-//        int width = hexWidth(s);
-//        int halfHeight = s;
-//        List<int[]> hexPos;
-//
-//
-//        for (int i = 0; i < halfHeight; i += 1) {
-//            for (int j = i; j < width - i; j += 1) {
-//                int[] pos = new int[2];
-//                // top part of hex
-//                pos[0] = X+j;
-//                pos[1] = Y+i;
-//                world[X+j][Y+i] = Tileset.WALL;
-//                // lower part of hex
-//
-//                world[X+j][Y-1-i] = Tileset.WALL;
-//            }
-//        }
-//
-//    }
+    private static int hexWidth(int s) {
+        return (s-1) * 3 +1;
+    }
 }
