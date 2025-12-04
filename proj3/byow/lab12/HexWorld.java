@@ -1,11 +1,10 @@
 package byow.lab12;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import javax.swing.text.Position;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +18,7 @@ public class HexWorld {
 
     private static final int WIDTH = 100;
     private static final int HEIGHT = 100;
-    private static final long SEED = 28731;
+    private static final long SEED = 2333;
     private static final Random RANDOM = new Random(SEED);
 
     public static void main(String[] args) {
@@ -27,17 +26,15 @@ public class HexWorld {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
 
-
-        // initialize tiles
+        // initialize world all tiles
         TETile[][] world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
-        // change tiletype in here
-        TETile tileType = Tileset.WALL;
 
+        // change here!
         addHexagons(3, 2, world, 50, 50);
 
         // draw
@@ -48,24 +45,23 @@ public class HexWorld {
     /**
      * prepare tessellated hexagons in the world (n layers of ring around the center hexagon)
      * with random tile type per hexagon
-     * @param s
+     * @param s base hexagon of side length s
      * @param n n is the number of rings, larger n means larger hexagons group.
-     * @param world
      * @param X world position of the first character in upper row(of the center two rows)
      *          OF the center hexagon
      * @param Y ditto
      */
     private static void addHexagons(int s, int n, TETile[][] world, int X, int Y) {
-        // create a list of lists, indicating the start positions of each hexagon
-        List<List<Integer>> newStartPos = new ArrayList<>(List.of());
+        // create a list of lists, indicating all the start positions of each hexagon
+        List<List<Integer>> allStartPos = new ArrayList<>(List.of());
 
-        newStartPos.add(Arrays.asList(X, Y));
+        allStartPos.add(Arrays.asList(X, Y));
 
         for (int i = 0; i < n; i++) {
-            List<List<Integer>> temp = new ArrayList<>(List.of());
-            List<List<Integer>> sum = new ArrayList<>(List.of());
-            for (List<Integer> pos: newStartPos) {
+            List<List<Integer>> temp = new ArrayList<>();
+            List<List<Integer>> sum = new ArrayList<>();
 
+            for (List<Integer> pos: allStartPos) {
                 temp = getStartPosOfGivenCenter(s, pos.get(0), pos.get(1));
                 sum.addAll(temp);
             }
@@ -75,29 +71,18 @@ public class HexWorld {
                     .distinct()
                     .collect(Collectors.toList());
 
-            newStartPos = unique;
+            allStartPos = unique;
         }
 
-        for (List<Integer> pos: newStartPos){
+        // iterate thru start positions and add base hexagon.
+        for (List<Integer> pos: allStartPos){
             addHexagon(s, randomTile(), world, pos.get(0), pos.get(1));
         }
-
-
-
     }
-    //     aa        aaa         aaaa             aaaaa
-    //    aaaa      aaaaa       aaaaaa           aaaaaaa
-    //    aaaa     aaaaaaa     aaaaaaaa         aaaaaaaaa
-    //     aa      aaaaaaa    aaaaaaaaaa       aaaaaaaaaaa
-    //              aaaaa     aaaaaaaaaa      aaaaaaaaaaaaa
-    //               aaa       aaaaaaaa       aaaaaaaaaaaaa
-    //                          aaaaaa         aaaaaaaaaaa
-    //                           aaaa           aaaaaaaaa
-    //                                           aaaaaaa
-    //                                            aaaaa
+
     /**
      * prepare a hexagon of side length s to a given position in the world
-     * @param s a hexagon of side length s
+     * @param s base hexagon of side length s
      * @param tileType tile's type like WALL, WATER etc.
      * @param X Y world position of the first character in upper row(of the center two rows)
      */
@@ -112,6 +97,7 @@ public class HexWorld {
 
     /**
      * a list of arrays, indicating positions of all characters in one hexagon
+     * list of arrays should be ditched and change to list of lists
      * @param s
      * @param X
      * @param Y
@@ -120,7 +106,7 @@ public class HexWorld {
     private static List<int[]> oneHexPos(int s, int X, int Y) {
         int width = hexWidth(s);
         int halfHeight = s;
-        List<int[]> hexPos = new java.util.ArrayList<>(List.of());
+        List<int[]> hexPos = new ArrayList<>();
 
         for (int i = 0; i < halfHeight; i += 1) {
             for (int j = i; j < width - i; j += 1) {
@@ -148,9 +134,10 @@ public class HexWorld {
     }
 
     /**
-     * given the world position(start position) of the center hexagon
-     * return a list of start positions of all tessellated hexagons around it
+     * return a list of start positions of all tessellated hexagons around the
+     * world position(start position) of the center hexagon
      * (inclusive, 7 in total)
+     * used when need to draw tessellated hexagons
      */
     private static List<List<Integer>> getStartPosOfGivenCenter(int s, int X, int Y) {
         int h = s * 2;
