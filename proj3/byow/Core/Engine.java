@@ -9,6 +9,22 @@ public class Engine {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
 
+    // temp main for phase 1
+    public static void main(String[] args) {
+
+        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+
+        Engine engine = new Engine();
+        TETile[][] dungeonWorld = engine.interactWithInputString(args[0]);
+
+        // draw
+        ter.renderFrame(dungeonWorld);
+    }
+
+
+
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
@@ -46,7 +62,19 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
-        TETile[][] finalWorldFrame = null;
+        if (input.charAt(0) != 'N' || input.charAt(0) != 'n') {
+            System.out.println("input format: N#######SWWWWAA");
+            System.exit(0);
+        }
+
+        // get the seed and pass it to random
+
+
+
+
+        // Map generator
+        TETile[][] finalWorldFrame = MapGenerator.generate(seed, WIDTH, HEIGHT);
+
         return finalWorldFrame;
     }
 }
