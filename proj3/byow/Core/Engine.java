@@ -3,27 +3,14 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
+import java.util.Random;
+
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-
-    // temp main for phase 1
-    public static void main(String[] args) {
-
-        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-        TERenderer ter = new TERenderer();
-        ter.initialize(WIDTH, HEIGHT);
-
-        Engine engine = new Engine();
-        TETile[][] dungeonWorld = engine.interactWithInputString(args[0]);
-
-        // draw
-        ter.renderFrame(dungeonWorld);
-    }
-
-
+    public static Random RANDOM;
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -62,18 +49,25 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
-        if (input.charAt(0) != 'N' || input.charAt(0) != 'n') {
-            System.out.println("input format: N#######SWWWWAA");
-            System.exit(0);
-        }
+//        if (input.charAt(0) != 'N' || input.charAt(0) != 'n') {
+//            System.out.println("input format: N#######SWWWWAA");
+//            System.exit(0);
+//        }
 
-        // get the seed and pass it to random
 
+        //
+        // todo temporary seed. remember delete this seed and delete the main parameter setting.
+        long seed = 231;
+
+        // get the long seed and pass it to random
+        // once set, this random object won't change
+        RANDOM = new Random(seed);
 
 
 
         // Map generator
-        TETile[][] finalWorldFrame = MapGenerator.generate(seed, WIDTH, HEIGHT);
+        // todo get the seed from input
+        TETile[][] finalWorldFrame = MapGenerator.generate();
 
         return finalWorldFrame;
     }

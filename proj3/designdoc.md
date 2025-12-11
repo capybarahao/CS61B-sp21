@@ -23,3 +23,6 @@ Anything complicated involving shared variables(set and accessed by multiple met
 DO
 
 If you need to return multiple things, make a class that has multiple fields.
+
+For example, I made a Position class that just
+stored x and y coordinates (and later found it useful to add methods to my Position class).
