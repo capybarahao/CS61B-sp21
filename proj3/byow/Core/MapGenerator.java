@@ -4,6 +4,8 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -42,9 +44,34 @@ public class MapGenerator {
         }
 
         // generate rooms
-        // pass TETile[][] world, RANDOM,
-        Room newRoom = Room.randomSizePosRoom();
-        addARoomToWorld(newRoom, world);
+        // pass TETile[][] world
+
+        List<Room> rooms = new ArrayList<>();
+
+        // desired room numbers range
+        int roomNum = RandomUtils.uniform(Engine.RANDOM, 10, 20);
+
+        int maxAttempts = 1000;
+        while (rooms.size() < roomNum) {
+            Room newRoom = Room.randomSizePosRoom();
+
+            if (!newRoom.overlapWithCurRooms(rooms)) {
+                rooms.add(newRoom);
+            }
+
+            // avoid infinite loops.
+            maxAttempts -= 1;
+            if (maxAttempts == 0) {
+                break;
+            }
+        }
+
+
+        for (Room room: rooms) {
+            addARoomToWorld(room, world);
+        }
+
+
 
 
         // generate hallways
@@ -53,6 +80,12 @@ public class MapGenerator {
         return world;
     }
 
+
+    /**
+     * "draw this room to the world"
+     * @param room
+     * @param world
+     */
     public static void addARoomToWorld(Room room, TETile[][] world) {
         // validate if it can be added(overlap check, out of map check
 
@@ -63,6 +96,8 @@ public class MapGenerator {
                 world[room.pos.x + i][room.pos.y + j] = room.floor;
             }
         }
+
+        // wall
 
 
     }

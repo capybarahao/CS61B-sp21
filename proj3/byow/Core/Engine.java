@@ -57,7 +57,7 @@ public class Engine {
 
         //
         // todo temporary seed. remember delete this seed and delete the main parameter setting.
-        long seed = 231;
+        long seed = 31431;
 
         // get the long seed and pass it to random
         // once set, this random object won't change

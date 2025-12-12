@@ -3,6 +3,7 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.List;
 import java.util.Random;
 
 public class Room {
@@ -36,4 +37,27 @@ public class Room {
         Room rRoom = new Room(w, h, pos);
         return rRoom;
     }
+
+    public boolean overlapWithCurRooms(List<Room> rooms) {
+        // iterate each room in the list
+        for (Room other: rooms) {
+            if (this.overlap(other)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean overlap(Room other) {
+        // No overlap if one rectangle is completely to the left, right, above, or below the other
+        if (this.pos.x + this.width <= other.pos.x || other.pos.x + other.width <= this.pos.x) {
+            return false;
+        }
+        if (this.pos.y + this.height <= other.pos.y || other.pos.y + other.height <= this.pos.y) {
+            return false;
+        }
+        return true;
+    }
+
+
 }

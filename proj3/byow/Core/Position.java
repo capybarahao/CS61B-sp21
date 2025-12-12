@@ -17,8 +17,10 @@ public class Position {
 
     public static Position randomPos() {
 
-        int x = RandomUtils.uniform(Engine.RANDOM, Engine.WIDTH);
-        int y = RandomUtils.uniform(Engine.RANDOM, Engine.HEIGHT);
+        // todo: Ensure it's within bounds (x from 1 to WIDTH - width - 1, same for y).
+
+        int x = RandomUtils.uniform(Engine.RANDOM, Engine.WIDTH - Room.maxWidth);
+        int y = RandomUtils.uniform(Engine.RANDOM, Engine.HEIGHT- Room.maxHeight);
         Position pos = new Position(x, y);
         return pos;
     }
