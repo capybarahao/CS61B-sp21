@@ -14,6 +14,8 @@ public class Room {
     public final TETile wall = Tileset.WALL;
     public final TETile floor = Tileset.SAND;
     // change room size(possible) here
+    public static final int minWidth = 4;
+    public static final int minHeight = 4;
     public static final int maxWidth = 8;
     public static final int maxHeight = 8;
 
@@ -30,8 +32,8 @@ public class Room {
 
     public static Room randomSizePosRoom() {
 
-        int w = RandomUtils.uniform(Engine.RANDOM, 3, maxWidth);
-        int h = RandomUtils.uniform(Engine.RANDOM, 3, maxHeight);
+        int w = RandomUtils.uniform(Engine.RANDOM, minWidth, maxWidth);
+        int h = RandomUtils.uniform(Engine.RANDOM, minHeight, maxHeight);
         Position pos = Position.randomPos();
 
         Room rRoom = new Room(w, h, pos);

@@ -44,7 +44,7 @@ public class MapGenerator {
         }
 
         // generate rooms
-        // pass TETile[][] world
+        //
 
         List<Room> rooms = new ArrayList<>();
 
