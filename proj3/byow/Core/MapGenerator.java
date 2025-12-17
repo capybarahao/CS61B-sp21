@@ -91,13 +91,22 @@ public class MapGenerator {
 
 
         // add a room to world
+        // all floor first
         for (int i = 0; i < room.width; i++) {
             for (int j = 0; j < room.height; j++) {
                 world[room.pos.x + i][room.pos.y + j] = room.floor;
             }
         }
 
-        // wall
+        // walls then
+        for (int i = 0; i < room.width; i++) {
+            world[room.pos.x + i][room.pos.y] = room.wall;
+            world[room.pos.x + i][room.pos.y + room.height - 1] = room.wall;
+        }
+        for (int i = 0; i < room.height; i++) {
+            world[room.pos.x][room.pos.y + i] = room.wall;
+            world[room.pos.x + room.width - 1][room.pos.y + i] = room.wall;
+        }
 
 
     }
