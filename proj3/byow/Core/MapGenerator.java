@@ -76,6 +76,7 @@ public class MapGenerator {
         // todo
 
         Room.sortByPosX(rooms);
+
         // connect sorted rooms by generate hallway floor
         for (int i = 0; i < rooms.size() - 1; i++) {
             addHallwayFloor(world, rooms.get(i).randomConnectPos(), rooms.get(i+1).randomConnectPos());
@@ -138,24 +139,43 @@ public class MapGenerator {
             // draw horizontal first
             for (int i = 0; i != dx; i += stepX) {
                 world[x][y] = Room.floor;
+                addWallToHallwayTile(world, x, y);
                 x += stepX;
             }
             // then vertical
             for (int i = 0; i != dy; i += stepY) {
                 world[x][y] = Room.floor;
+                addWallToHallwayTile(world, x, y);
                 y += stepY;
             }
         } else {
             // draw vertical first
             for (int i = 0; i != dy; i += stepY) {
                 world[x][y] = Room.floor;
+                addWallToHallwayTile(world, x, y);
                 y += stepY;
             }
             // then horizontal
             for (int i = 0; i != dx; i += stepX) {
                 world[x][y] = Room.floor;
+                addWallToHallwayTile(world, x, y);
                 x += stepX;
             }
+        }
+    }
+
+    public static void addWallToHallwayTile(TETile[][] world, int x, int y) {
+        if (world[x][y+1] == Tileset.NOTHING) {
+            world[x][y+1] = Room.wall;
+        }
+        if (world[x][y-1] == Tileset.NOTHING) {
+            world[x][y-1] = Room.wall;
+        }
+        if (world[x+1][y] == Tileset.NOTHING) {
+            world[x+1][y] = Room.wall;
+        }
+        if (world[x-1][y] == Tileset.NOTHING) {
+            world[x-1][y] = Room.wall;
         }
     }
 }
