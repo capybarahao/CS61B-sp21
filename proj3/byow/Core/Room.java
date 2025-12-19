@@ -4,6 +4,7 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -66,10 +67,8 @@ public class Room {
      * sort rooms in order of x, that is, the left most will be placed in the front
      * @param rooms
      */
-    public static List<Room> sortByPosX(List<Room> rooms) {
-        List<Room> sortedRooms = new ArrayList<>();
-
-        return sortedRooms;
+    public static void sortByPosX(List<Room> rooms) {
+        rooms.sort(Comparator.comparingInt(r -> r.pos.x));
     }
 
     public Position randomConnectPos(){

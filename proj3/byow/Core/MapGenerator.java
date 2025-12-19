@@ -51,7 +51,7 @@ public class MapGenerator {
         List<Room> rooms = new ArrayList<>();
 
         // desired room numbers range
-        int roomNum = RandomUtils.uniform(Engine.RANDOM, 3, 15);
+        int roomNum = RandomUtils.uniform(Engine.RANDOM, 10, 15);
 
         int maxAttempts = 1000;
         while (rooms.size() < roomNum) {
@@ -74,8 +74,13 @@ public class MapGenerator {
 
         // generate hallways
         // todo
+
+        Room.sortByPosX(rooms);
         // connect sorted rooms by generate hallway floor
-        addHallwayFloor(world, rooms.get(5).randomConnectPos(), rooms.get(7).randomConnectPos());
+        for (int i = 0; i < rooms.size() - 1; i++) {
+            addHallwayFloor(world, rooms.get(i).randomConnectPos(), rooms.get(i+1).randomConnectPos());
+        }
+
 
         return world;
     }
