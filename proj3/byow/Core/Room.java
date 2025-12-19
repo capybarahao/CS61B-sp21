@@ -3,6 +3,7 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -11,13 +12,13 @@ public class Room {
     public final int width;
     public final int height;
     public final Position pos;
-    public final TETile wall = Tileset.WALL;
-    public final TETile floor = Tileset.SAND;
+    public static final TETile wall = Tileset.WALL;
+    public static final TETile floor = Tileset.SAND;
     // change room size(possible) here
-    public static final int minWidth = 4;
-    public static final int minHeight = 4;
-    public static final int maxWidth = 8;
-    public static final int maxHeight = 8;
+    public static final int minWidth = 6;
+    public static final int minHeight = 6;
+    public static final int maxWidth = 10;
+    public static final int maxHeight = 10;
 
 
     /** full constructor
@@ -61,5 +62,21 @@ public class Room {
         return true;
     }
 
+    /**
+     * sort rooms in order of x, that is, the left most will be placed in the front
+     * @param rooms
+     */
+    public static List<Room> sortByPosX(List<Room> rooms) {
+        List<Room> sortedRooms = new ArrayList<>();
+
+        return sortedRooms;
+    }
+
+    public Position randomConnectPos(){
+        int x = RandomUtils.uniform(Engine.RANDOM, pos.x + 1, pos.x + width - 2);
+        int y = RandomUtils.uniform(Engine.RANDOM, pos.y + 1, pos.y + height - 2);
+        Position randomConnectPos = new Position(x, y);
+        return randomConnectPos;
+    }
 
 }

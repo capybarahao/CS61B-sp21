@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static java.lang.Math.abs;
+
 /**
  *
  */
@@ -43,13 +45,13 @@ public class MapGenerator {
             }
         }
 
-        // generate rooms
+        // generate rooms, a list of rooms
         //
 
         List<Room> rooms = new ArrayList<>();
 
         // desired room numbers range
-        int roomNum = RandomUtils.uniform(Engine.RANDOM, 10, 20);
+        int roomNum = RandomUtils.uniform(Engine.RANDOM, 3, 15);
 
         int maxAttempts = 1000;
         while (rooms.size() < roomNum) {
@@ -66,16 +68,14 @@ public class MapGenerator {
             }
         }
 
-
         for (Room room: rooms) {
             addARoomToWorld(room, world);
         }
 
-
-
-
         // generate hallways
-
+        // todo
+        // connect sorted rooms by generate hallway floor
+        addHallwayFloor(world, rooms.get(5).randomConnectPos(), rooms.get(7).randomConnectPos());
 
         return world;
     }
@@ -94,22 +94,63 @@ public class MapGenerator {
         // all floor first
         for (int i = 0; i < room.width; i++) {
             for (int j = 0; j < room.height; j++) {
-                world[room.pos.x + i][room.pos.y + j] = room.floor;
+                world[room.pos.x + i][room.pos.y + j] = Room.floor;
             }
         }
 
         // walls then
         for (int i = 0; i < room.width; i++) {
-            world[room.pos.x + i][room.pos.y] = room.wall;
-            world[room.pos.x + i][room.pos.y + room.height - 1] = room.wall;
+            world[room.pos.x + i][room.pos.y] = Room.wall;
+            world[room.pos.x + i][room.pos.y + room.height - 1] = Room.wall;
         }
         for (int i = 0; i < room.height; i++) {
-            world[room.pos.x][room.pos.y + i] = room.wall;
-            world[room.pos.x + room.width - 1][room.pos.y + i] = room.wall;
+            world[room.pos.x][room.pos.y + i] = Room.wall;
+            world[room.pos.x + room.width - 1][room.pos.y + i] = Room.wall;
         }
-
-
     }
 
+    /**
+     * add a random hallway (just floor) to connect two position rooms.
+     * @param world
+     * @param a a random position inside room
+     * @param b
+     */
+    public static void addHallwayFloor(TETile[][] world, Position a, Position b) {
+        int dx = b.x - a.x;
+        int dy = b.y - a.y;
 
+        // decide randomly, from pos a, go horizontal first or vertical.
+        boolean drawHorizontalFirst = RandomUtils.bernoulli(Engine.RANDOM);
+
+        // bit complicated but it works :) don't change
+        int stepX = Integer.signum(dx);
+        int stepY = Integer.signum(dy);
+
+        int x = a.x;
+        int y = a.y;
+
+        if (drawHorizontalFirst) {
+            // draw horizontal first
+            for (int i = 0; i != dx; i += stepX) {
+                world[x][y] = Room.floor;
+                x += stepX;
+            }
+            // then vertical
+            for (int i = 0; i != dy; i += stepY) {
+                world[x][y] = Room.floor;
+                y += stepY;
+            }
+        } else {
+            // draw vertical first
+            for (int i = 0; i != dy; i += stepY) {
+                world[x][y] = Room.floor;
+                y += stepY;
+            }
+            // then horizontal
+            for (int i = 0; i != dx; i += stepX) {
+                world[x][y] = Room.floor;
+                x += stepX;
+            }
+        }
+    }
 }
