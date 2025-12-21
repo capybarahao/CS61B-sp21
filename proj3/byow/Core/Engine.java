@@ -49,24 +49,37 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
-//        if (input.charAt(0) != 'N' || input.charAt(0) != 'n') {
-//            System.out.println("input format: N#######SWWWWAA");
-//            System.exit(0);
-//        }
+        String upprInput = input.toUpperCase();
 
+        if (upprInput.charAt(0) != 'N') {
+            System.out.println("input format: N#######SWWWWAASSS\nStart with N");
+            System.exit(0);
+        }
+        int i = 1;
+        String seedString = new String();
+        while (upprInput.charAt(i) != 'S') {
+            String nextNum = String.valueOf(upprInput.charAt(i));
+            seedString = seedString.concat(nextNum);
+            i++;
+            if (i == upprInput.length()) {
+                System.out.println("input format: N#######SWWWWAASSS\nSeed end with S");
+                System.exit(0);
+            }
+        }
 
-        //
-        // todo temporary seed. remember delete this seed and delete the main parameter setting.
-        long seed = 1434341;
+        // parse seed to int
+        long seed;
+        try {
+            seed = Long.parseLong(seedString);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
 
         // get the long seed and pass it to random
         // once set, this random object won't change
         RANDOM = new Random(seed);
 
-
-
         // Map generator
-        // todo get the seed from input
         TETile[][] finalWorldFrame = MapGenerator.generate();
 
         return finalWorldFrame;

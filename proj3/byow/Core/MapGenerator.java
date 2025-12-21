@@ -15,6 +15,9 @@ import static java.lang.Math.abs;
  */
 public class MapGenerator {
 
+    // change room numbers(possible) here
+    public static final int minRoomNum = 20;
+    public static final int maxRoomNum = 22;
 
     // temp main for phase 1
     public static void main(String[] args) {
@@ -51,7 +54,7 @@ public class MapGenerator {
         List<Room> rooms = new ArrayList<>();
 
         // desired room numbers range
-        int roomNum = RandomUtils.uniform(Engine.RANDOM, 10, 15);
+        int roomNum = RandomUtils.uniform(Engine.RANDOM, minRoomNum, maxRoomNum);
 
         int maxAttempts = 1000;
         while (rooms.size() < roomNum) {
