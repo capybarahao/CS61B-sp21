@@ -58,8 +58,8 @@ public class Engine {
         int i = 1;
         String seedString = new String();
         while (upprInput.charAt(i) != 'S') {
-            String nextNum = String.valueOf(upprInput.charAt(i));
-            seedString = seedString.concat(nextNum);
+            char nextNum = upprInput.charAt(i);
+            seedString = seedString + nextNum;
             i++;
             if (i == upprInput.length()) {
                 System.out.println("input format: N#######SWWWWAASSS\nSeed end with S");

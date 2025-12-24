@@ -76,15 +76,13 @@ public class MapGenerator {
         }
 
         // generate hallways
-        // todo
 
         Room.sortByPosX(rooms);
 
-        // connect sorted rooms by generate hallway floor
+        // connect sorted rooms one by one, by generate hallway floor
         for (int i = 0; i < rooms.size() - 1; i++) {
             addHallwayFloor(world, rooms.get(i).randomConnectPos(), rooms.get(i+1).randomConnectPos());
         }
-
 
         return world;
     }

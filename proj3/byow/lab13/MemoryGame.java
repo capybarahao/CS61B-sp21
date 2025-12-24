@@ -54,16 +54,28 @@ public class MemoryGame {
         StdDraw.enableDoubleBuffering();
 
         //TODO: Initialize random number generator
+        rand = new Random(seed);
     }
 
     public String generateRandomString(int n) {
         //TODO: Generate random string of letters of length n
-        return null;
+
+        String randString = "";
+
+        for (int i = 0; i < n; i++) {
+            int index = RandomUtils.uniform(rand, 0, CHARACTERS.length - 1);
+            randString = randString + CHARACTERS[index];
+        }
+
+        return randString;
     }
 
     public void drawFrame(String s) {
         //TODO: Take the string and display it in the center of the screen
+
         //TODO: If game is not over, display relevant game information at the top of the screen
+
+
     }
 
     public void flashSequence(String letters) {

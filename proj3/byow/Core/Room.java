@@ -71,6 +71,10 @@ public class Room {
         rooms.sort(Comparator.comparingInt(r -> r.pos.x));
     }
 
+    /**
+     *
+     * @return a random position inside this room, excluding wall
+     */
     public Position randomConnectPos(){
         int x = RandomUtils.uniform(Engine.RANDOM, pos.x + 1, pos.x + width - 2);
         int y = RandomUtils.uniform(Engine.RANDOM, pos.y + 1, pos.y + height - 2);
