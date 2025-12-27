@@ -104,7 +104,6 @@ public class MemoryGame {
         // there should be a brief 0.5 second break
 
         char[] LA = letters.toCharArray();
-        StdDraw.clear(Color.BLACK);
         for (int i = 0; i < LA.length; i++) {
             drawFrame(Character.toString(LA[i]));
             StdDraw.pause(1000);
@@ -147,6 +146,7 @@ public class MemoryGame {
             String roundString = generateRandomString(round);
             flashSequence(roundString);
             String answer = solicitNCharsInput(round);
+            StdDraw.pause(1000);
 
             if (Objects.equals(answer, roundString)) {
                 round += 1;
