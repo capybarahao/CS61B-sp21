@@ -47,7 +47,7 @@ public class MemoryGame {
         this.width = width;
         this.height = height;
         StdDraw.setCanvasSize(this.width * 16, this.height * 16);
-        Font font = new Font("Monaco", Font.BOLD, 30);
+        Font font = new Font("Monospaced", Font.BOLD, 30);
         StdDraw.setFont(font);
         StdDraw.setXscale(0, this.width);
         StdDraw.setYscale(0, this.height);
@@ -92,8 +92,15 @@ public class MemoryGame {
         StdDraw.text(width/2,height/2, s);
 
         //TODO: If game is not over, display relevant game information at the top of the screen
-
-
+        if (!gameOver) {
+            StdDraw.text(5, height -2, "Round: " + round);
+            if (playerTurn) {
+                StdDraw.text(width/2, height -2, "Type!");
+            }
+            else {
+                StdDraw.text(width/2, height -2, "Watch!");
+            }
+        }
 
         StdDraw.show();
     }
@@ -107,8 +114,7 @@ public class MemoryGame {
         for (int i = 0; i < LA.length; i++) {
             drawFrame(Character.toString(LA[i]));
             StdDraw.pause(1000);
-            StdDraw.clear(Color.BLACK);
-            StdDraw.show();
+            drawFrame("");
             StdDraw.pause(500);
         }
     }
@@ -138,6 +144,7 @@ public class MemoryGame {
         //TODO: Establish Engine loop
 
         while (!gameOver){
+            playerTurn = false;
             drawFrame("Round: " + round);
             StdDraw.pause(2000);
             StdDraw.clear(Color.BLACK);
@@ -145,6 +152,8 @@ public class MemoryGame {
 
             String roundString = generateRandomString(round);
             flashSequence(roundString);
+            playerTurn = true;
+            drawFrame("");
             String answer = solicitNCharsInput(round);
             StdDraw.pause(1000);
 
