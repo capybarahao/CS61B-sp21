@@ -84,6 +84,9 @@ public class MapGenerator {
             addHallways(world, rooms.get(i).randomPosInsideRoom(), rooms.get(i+1).randomPosInsideRoom());
         }
 
+        // generate a locked door
+        addDoor(rooms, world);
+
         // generate keys in random places
         List<Position> keys = addKeys(mapKeyNum, rooms, world);
         // generate door in random place
@@ -94,13 +97,12 @@ public class MapGenerator {
         return world;
     }
 
-
     /**
      * "draw this room to the world"
      * @param room
      * @param world
      */
-    public static void addARoomToWorld(Room room, TETile[][] world) {
+    private static void addARoomToWorld(Room room, TETile[][] world) {
         // validate if it can be added(overlap check, out of map check
 
 
@@ -129,7 +131,7 @@ public class MapGenerator {
      * @param a a random position inside room
      * @param b
      */
-    public static void addHallways(TETile[][] world, Position a, Position b) {
+    private static void addHallways(TETile[][] world, Position a, Position b) {
         int dx = b.x - a.x;
         int dy = b.y - a.y;
 
@@ -172,7 +174,7 @@ public class MapGenerator {
         }
     }
 
-    public static void addWallToHallwayTile(TETile[][] world, int x, int y) {
+    private static void addWallToHallwayTile(TETile[][] world, int x, int y) {
         if (world[x][y+1] == Tileset.NOTHING) {
             world[x][y+1] = Room.wall;
         }
@@ -196,7 +198,7 @@ public class MapGenerator {
         me.moveTo(me.curPos, world);
     }
 
-    public static List<Position> addKeys(int mapKeyNum, List<Room> rooms, TETile[][] world) {
+    private static List<Position> addKeys(int mapKeyNum, List<Room> rooms, TETile[][] world) {
         List<Position> keyPosList = new ArrayList<>();
 
         for (int i = 0; i < mapKeyNum; i++) {
@@ -209,5 +211,15 @@ public class MapGenerator {
             world[keyPos.x][keyPos.y] = Tileset.KEY;
         }
         return keyPosList;
+    }
+
+    private static void addDoor(List<Room> rooms, TETile[][] world) {
+        Room randRoom = Room.getARandomRoom(rooms);
+
+        Position doorPos = randRoom.randomPosOnWall();
+        while (!world[doorPos.x][doorPos.y].equals(Room.wall)) {
+            doorPos = randRoom.randomPosOnWall();
+        }
+        world[doorPos.x][doorPos.y] = Tileset.LOCKED_DOOR;
     }
 }

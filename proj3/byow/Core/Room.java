@@ -81,6 +81,33 @@ public class Room {
         Position randomPosInsideRoom = new Position(x, y);
         return randomPosInsideRoom;
     }
+    //  ######
+    // #      #
+    // #      #
+    //  ######
+    public Position randomPosOnWall(){
+        List<Position> wallTiles = new ArrayList<>();
+
+        for (int i = 0; i < this.width - 2; i++) {
+            int x = this.pos.x + 1 + i;
+            int y = this.pos.y;
+
+            wallTiles.add(new Position(x, y));
+            wallTiles.add(new Position(x, y + this.height -1));
+        }
+
+
+        for (int i = 0; i < this.height - 2; i++) {
+            int x = this.pos.x;
+            int y = this.pos.y  + 1 + i;
+
+            wallTiles.add(new Position(x, y));
+            wallTiles.add(new Position(x + this.width - 1, y));
+        }
+        int randIndex = RandomUtils.uniform(Engine.RANDOM, 0, wallTiles.size());
+        Position randPosOnWall = wallTiles.get(randIndex);
+        return randPosOnWall;
+    }
 
     public static Room getARandomRoom(List<Room> rooms) {
         // shuffle rooms and get the first one room
@@ -88,5 +115,6 @@ public class Room {
         Room randRoom = rooms.get(randIndex);
         return randRoom;
     }
+
 
 }
