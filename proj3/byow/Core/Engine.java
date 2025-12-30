@@ -49,6 +49,19 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
+        // get the long seed and pass it to random
+        // once set, this random object won't change
+        long seed = getSeedFromInput(input);
+        RANDOM = new Random(seed);
+
+        // Map generator
+        TETile[][] finalWorldFrame = MapGenerator.generate();
+
+        return finalWorldFrame;
+    }
+
+    private long getSeedFromInput(String input) {
+
         String upprInput = input.toUpperCase();
 
         if (upprInput.charAt(0) != 'N') {
@@ -67,21 +80,9 @@ public class Engine {
             }
         }
 
-        // parse seed to int
-        long seed;
-        try {
-            seed = Long.parseLong(seedString);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
-        }
+        // parse seed to long
+        long seed = Long.parseLong(seedString);
+        return seed;
 
-        // get the long seed and pass it to random
-        // once set, this random object won't change
-        RANDOM = new Random(seed);
-
-        // Map generator
-        TETile[][] finalWorldFrame = MapGenerator.generate();
-
-        return finalWorldFrame;
     }
 }

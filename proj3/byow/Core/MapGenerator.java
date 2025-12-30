@@ -17,9 +17,13 @@ public class MapGenerator {
 
     // change room numbers(possible) here
     public static final int minRoomNum = 20;
-    public static final int maxRoomNum = 22;
+    public static final int maxRoomNum = 22; // excluded
 
-    // temp main for phase 1
+    public static final int mapKeyNum = 2;
+    public static final TETile keyLook = Tileset.KEY;
+
+    // todo temp main for phase 1
+
     public static void main(String[] args) {
 
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
@@ -53,17 +57,15 @@ public class MapGenerator {
 
         List<Room> rooms = new ArrayList<>();
 
-        // desired room numbers range
+        // set desired room numbers range
         int roomNum = RandomUtils.uniform(Engine.RANDOM, minRoomNum, maxRoomNum);
 
         int maxAttempts = 1000;
         while (rooms.size() < roomNum) {
             Room newRoom = Room.randomSizePosRoom();
-
             if (!newRoom.overlapWithCurRooms(rooms)) {
                 rooms.add(newRoom);
             }
-
             // avoid infinite loops.
             maxAttempts -= 1;
             if (maxAttempts == 0) {
@@ -76,13 +78,18 @@ public class MapGenerator {
         }
 
         // generate hallways
-
         Room.sortByPosX(rooms);
 
-        // connect sorted rooms one by one, by generate hallway floor
-        for (int i = 0; i < rooms.size() - 1; i++) {
-            addHallwayFloor(world, rooms.get(i).randomConnectPos(), rooms.get(i+1).randomConnectPos());
+        for (int i = 0; i < rooms.size() - 1; i++) { // connect sorted rooms one by one, by generate hallway floor
+            addHallways(world, rooms.get(i).randomPosInsideRoom(), rooms.get(i+1).randomPosInsideRoom());
         }
+
+        // generate keys in random places
+        List<Position> keys = addKeys(mapKeyNum, rooms, world);
+        // generate door in random place
+
+        // generate avatar in random place
+        addAvatar(rooms, world);
 
         return world;
     }
@@ -117,12 +124,12 @@ public class MapGenerator {
     }
 
     /**
-     * add a random hallway (just floor) to connect two position rooms.
+     * add a random hallway to connect two position rooms.
      * @param world
      * @param a a random position inside room
      * @param b
      */
-    public static void addHallwayFloor(TETile[][] world, Position a, Position b) {
+    public static void addHallways(TETile[][] world, Position a, Position b) {
         int dx = b.x - a.x;
         int dy = b.y - a.y;
 
@@ -178,5 +185,29 @@ public class MapGenerator {
         if (world[x-1][y] == Tileset.NOTHING) {
             world[x-1][y] = Room.wall;
         }
+    }
+
+    public static void addAvatar(List<Room> rooms, TETile[][] world) {
+        //
+        Room randRoom = Room.getARandomRoom(rooms);
+
+        Avatar me = new Avatar(randRoom.randomPosInsideRoom(), world);
+
+        me.moveTo(me.curPos, world);
+    }
+
+    public static List<Position> addKeys(int mapKeyNum, List<Room> rooms, TETile[][] world) {
+        List<Position> keyPosList = new ArrayList<>();
+
+        for (int i = 0; i < mapKeyNum; i++) {
+            Room randRoom = Room.getARandomRoom(rooms);
+            Position keyPos = randRoom.randomPosInsideRoom();
+            keyPosList.add(keyPos);
+        }
+
+        for(Position keyPos: keyPosList) {
+            world[keyPos.x][keyPos.y] = Tileset.KEY;
+        }
+        return keyPosList;
     }
 }

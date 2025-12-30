@@ -15,7 +15,7 @@ public class Position {
         this.y = y;
     }
 
-    public static Position randomPos() {
+    public static Position randomPosAnyWhere() {
 
         // todo: Ensure it's within bounds (x from 1 to WIDTH - width - 1, same for y).
 

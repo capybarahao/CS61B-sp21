@@ -14,12 +14,12 @@ public class Room {
     public final int height;
     public final Position pos;
     public static final TETile wall = Tileset.WALL;
-    public static final TETile floor = Tileset.SAND;
+    public static final TETile floor = Tileset.FLOOR;
     // change room size(possible) here
     public static final int minWidth = 6;
     public static final int minHeight = 6;
-    public static final int maxWidth = 10;
-    public static final int maxHeight = 10;
+    public static final int maxWidth = 11; // excluded
+    public static final int maxHeight = 11; // excluded
 
 
     /** full constructor
@@ -36,7 +36,7 @@ public class Room {
 
         int w = RandomUtils.uniform(Engine.RANDOM, minWidth, maxWidth);
         int h = RandomUtils.uniform(Engine.RANDOM, minHeight, maxHeight);
-        Position pos = Position.randomPos();
+        Position pos = Position.randomPosAnyWhere();
 
         Room rRoom = new Room(w, h, pos);
         return rRoom;
@@ -75,11 +75,18 @@ public class Room {
      *
      * @return a random position inside this room, excluding wall
      */
-    public Position randomConnectPos(){
-        int x = RandomUtils.uniform(Engine.RANDOM, pos.x + 1, pos.x + width - 2);
-        int y = RandomUtils.uniform(Engine.RANDOM, pos.y + 1, pos.y + height - 2);
-        Position randomConnectPos = new Position(x, y);
-        return randomConnectPos;
+    public Position randomPosInsideRoom(){
+        int x = RandomUtils.uniform(Engine.RANDOM, this.pos.x + 1, this.pos.x + this.width - 1);
+        int y = RandomUtils.uniform(Engine.RANDOM, this.pos.y + 1, this.pos.y + this.height - 1);
+        Position randomPosInsideRoom = new Position(x, y);
+        return randomPosInsideRoom;
+    }
+
+    public static Room getARandomRoom(List<Room> rooms) {
+        // shuffle rooms and get the first one room
+        int randIndex = RandomUtils.uniform(Engine.RANDOM, 0, rooms.size());
+        Room randRoom = rooms.get(randIndex);
+        return randRoom;
     }
 
 }

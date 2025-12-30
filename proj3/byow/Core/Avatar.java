@@ -1,0 +1,35 @@
+package byow.Core;
+
+import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
+
+import java.util.List;
+
+public class Avatar {
+
+    public final TETile meLook = Tileset.AVATAR;
+    public int keyNum = 0;
+    public final int viewRange = 5;
+    public Position curPos;
+    /** full constructor
+     *
+     */
+    public Avatar(Position spawnPos, TETile[][] world) {
+        this.curPos = spawnPos;
+        world[curPos.x][curPos.y] = meLook;
+    }
+
+    public void moveTo(Position targetPos, TETile[][] world) {
+        // if overlap with key position, add key
+        if (world[targetPos.x][targetPos.y].equals(Tileset.KEY)) {
+            this.keyNum += 1;
+        }
+
+        world[curPos.x][curPos.y] = Room.floor;
+        this.curPos = targetPos;
+        world[curPos.x][curPos.y] = meLook;
+
+
+    }
+
+}
