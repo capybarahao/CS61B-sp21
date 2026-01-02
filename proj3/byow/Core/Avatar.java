@@ -19,10 +19,29 @@ public class Avatar {
         world[curPos.x][curPos.y] = meLook;
     }
 
+
+    public static Avatar generateNewAvatar(TETile[][] mapFrame) {
+        // find a valid random pos in map
+        int x = 0;
+        int y = 0;
+        while (!mapFrame[x][y].equals(Room.floor)) {
+            x = RandomUtils.uniform(Engine.RANDOM, Engine.WIDTH);
+            y = RandomUtils.uniform(Engine.RANDOM, Engine.HEIGHT);
+        }
+        Position randomPos = new Position(x, y);
+
+        // create avatar
+        return new Avatar(randomPos, mapFrame);
+    }
+
+
     public void moveTo(Position targetPos, TETile[][] world) {
         // if move to key position, add key
         if (world[targetPos.x][targetPos.y].equals(Tileset.KEY)) {
             this.keyNum += 1;
+            world[curPos.x][curPos.y] = Room.floor;
+            this.curPos = targetPos;
+            world[curPos.x][curPos.y] = meLook;
         }
         // if movable , move to the floor tile
         else if (world[targetPos.x][targetPos.y].equals(Room.floor)) {
@@ -34,6 +53,10 @@ public class Avatar {
         }
         else if (world[targetPos.x][targetPos.y].equals(Tileset.LOCKED_DOOR)) {
             // todo
+            // win
+
+
+
         }
         else {
             return;

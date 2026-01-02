@@ -5,7 +5,7 @@ import byow.InputDemo.InputSource;
 /**
  * Created by hug.
  */
-public class StringInput implements InputSource  {
+public class StringInput implements InputSources  {
     private String input;
     private int index;
 

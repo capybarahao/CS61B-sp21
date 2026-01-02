@@ -25,9 +25,15 @@ public class Position {
         return pos;
     }
 
+    /**
+     * pass char other than WASD return current me position
+     * @param me
+     * @param direction
+     * @return
+     */
     public static Position nextMovePos(Avatar me, char direction) {
-        int x = 0;
-        int y = 0;
+        int x = me.curPos.x;
+        int y = me.curPos.y;
         switch (direction) {
             case 'W':
                 x = me.curPos.x;

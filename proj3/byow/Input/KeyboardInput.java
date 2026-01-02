@@ -6,9 +6,9 @@ package byow.Input;
 import byow.InputDemo.InputSource;
 import edu.princeton.cs.introcs.StdDraw;
 
-public class KeyboardInputSource implements InputSource {
+public class KeyboardInput implements InputSource {
     private static final boolean PRINT_TYPED_KEYS = false;
-    public KeyboardInputSource() {
+    public KeyboardInput() {
         StdDraw.text(0.3, 0.3, "press m to moo, q to quit");
     }
 

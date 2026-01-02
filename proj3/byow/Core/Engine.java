@@ -1,11 +1,9 @@
 package byow.Core;
 
-import byow.InputDemo.InputSource;
-import byow.InputDemo.KeyboardInputSource;
-import byow.InputDemo.StringInputDevice;
+import byow.Input.InputSources;
+import byow.Input.StringInput;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
-import com.sun.tools.internal.ws.wsdl.document.Input;
 
 import java.util.Random;
 
@@ -62,99 +60,75 @@ public class Engine {
         String uprInput = input.toUpperCase();
         TETile[][] mapFrame = null;
         Avatar me = null;
-        long seed;
+        long seed = 0;
 
-        // if it's new game, generate initial map, generate avatar
+        // if it's new game, generate initial map, generate avatar,
 
         if (uprInput.charAt(0) == 'N') {
             // get the long seed and pass it to random
             // once set, this random object won't change
-            seed = getSeedFromInput(uprInput);
+            seed = Utils.getSeedFromInput(uprInput);
             RANDOM = new Random(seed);
 
             mapFrame = MapGenerator.generate();// generate map. since RANDOM is set, no input needed
-            me = generateNewAvatar(mapFrame);
+            me = Avatar.generateNewAvatar(mapFrame);
         }
 
-        // todo if it's load game, read save, get map, get avatar, and seed?
+        // todo if it's load game, read save, get map, get avatar, and seed
         else if (uprInput.charAt(0) == 'L') {
+            
+            
+            
+            
 
         } else { // not start with N or L, error arguments
             System.out.println("input format error");
             System.exit(0);
         }
 
-        //  MOVE according to following input. will get "wwsssdddd" "was:q"
-        InputSource inputSource = new StringInputDevice(getMoveFromInput(uprInput));
+        //  MOVE according to following input. will get like "" "wwsssdddd" "was:q" ":q"
+        InputSources inputSource = new StringInput(Utils.getMoveFromInput(uprInput));
 
         while (inputSource.possibleNextInput()) {
             char c = inputSource.getNextKey();
+            if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
+                // todo save and quit
+
+
+
+                saveProgress(mapFrame, me, seed);
+                return mapFrame;
+            }
             Position targetPos = Position.nextMovePos(me, c);
             me.moveTo(targetPos, mapFrame);
         }
 
         // render final map
         ter.renderFrame(mapFrame);
+
         // if :q save and quit
+
+
 
 
         return mapFrame;
     }
 
-    private static long getSeedFromInput(String uprInput) {
+    private static void saveProgress(TETile[][] finalMap, Avatar me, long seed) {
+        Save newSave = new Save(finalMap, me , seed);
 
-        int i = 1;
-        String seedString = new String();
-        while (uprInput.charAt(i) != 'S') {
-            char nextNum = uprInput.charAt(i);
-            seedString = seedString + nextNum;
-            i++;
-            if (i == uprInput.length()) {
-                System.out.println("input format: N#######SWWWWAASSS\nSeed end with S");
-                System.exit(0);
-            }
-        }
 
-        // parse seed to long
-        long seed = Long.parseLong(seedString);
-        return seed;
-    }
 
-    private String getMoveFromInput(String uprInput) {
-        String movements = new String();
-
-        if (uprInput.charAt(0) == 'L') {
-            movements = uprInput.substring(1); // if only "L", get an empty string
-        }
-        else if (uprInput.charAt(0) == 'N') {
-            for (int i = 0; i < uprInput.length(); i++) {
-                if (uprInput.charAt(i) == 'S') {
-                    movements = uprInput.substring(i+1);// if only "N141S", get an empty string
-                    break;
-                }
-            }
-        }
-        return movements;
 
     }
 
-    private static void saveAndQuit(TETile[][] finalMap, Avatar me) {
+    private static Save loadProgress() {
+        Save save = null;
 
+
+
+
+
+        return save;
     }
-
-
-    private Avatar generateNewAvatar(TETile[][] mapFrame) {
-        // find a valid random pos in map
-        int x = 0;
-        int y = 0;
-        while (!mapFrame[x][y].equals(Room.floor)) {
-            x = RandomUtils.uniform(Engine.RANDOM, WIDTH);
-            y = RandomUtils.uniform(Engine.RANDOM, HEIGHT);
-        }
-        Position randomPos = new Position(x, y);
-
-        // create avatar
-        return new Avatar(randomPos, mapFrame);
-    }
-
 }
