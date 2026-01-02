@@ -7,35 +7,17 @@ import byow.TileEngine.Tileset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.abs;
-
 /**
  *
  */
 public class MapGenerator {
 
     // change room numbers(possible) here
-    public static final int minRoomNum = 3;
-    public static final int maxRoomNum = 15; // excluded
+    public static final int minRoomNum = 14;
+    public static final int maxRoomNum = 20; // excluded
 
     public static final int mapKeyNum = 2;
     public static final TETile keyLook = Tileset.KEY;
-
-    // todo temp main for phase 1
-
-    public static void main(String[] args) {
-
-        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-        TERenderer ter = new TERenderer();
-        ter.initialize(Engine.WIDTH, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
-
-        Engine engine = new Engine();
-        TETile[][] dungeonWorld = engine.interactWithInputString(args[0]);
-
-        // draw
-        ter.renderFrame(dungeonWorld);
-    }
-
 
     /**
      * return a TETile[][] of world map
@@ -87,9 +69,6 @@ public class MapGenerator {
 
         // generate keys in random places
         List<Position> keys = addKeys(rooms, world);
-
-        // generate avatar in random place
-        addAvatar(rooms, world);
 
         return world;
     }
@@ -184,15 +163,6 @@ public class MapGenerator {
         if (world[x-1][y] == Tileset.NOTHING) {
             world[x-1][y] = Room.wall;
         }
-    }
-
-    public static void addAvatar(List<Room> rooms, TETile[][] world) {
-        //
-        Room randRoom = Room.getARandomRoom(rooms);
-
-        Avatar me = new Avatar(randRoom.randomPosInsideRoom(), world);
-
-        me.moveTo(me.curPos, world);
     }
 
     private static List<Position> addKeys(List<Room> rooms, TETile[][] world) {
