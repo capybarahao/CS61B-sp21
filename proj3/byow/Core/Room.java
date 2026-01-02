@@ -96,7 +96,6 @@ public class Room {
             wallTiles.add(new Position(x, y + this.height -1));
         }
 
-
         for (int i = 0; i < this.height - 2; i++) {
             int x = this.pos.x;
             int y = this.pos.y  + 1 + i;
@@ -104,6 +103,7 @@ public class Room {
             wallTiles.add(new Position(x, y));
             wallTiles.add(new Position(x + this.width - 1, y));
         }
+
         int randIndex = RandomUtils.uniform(Engine.RANDOM, 0, wallTiles.size());
         Position randPosOnWall = wallTiles.get(randIndex);
         return randPosOnWall;

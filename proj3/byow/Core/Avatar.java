@@ -20,7 +20,7 @@ public class Avatar {
     }
 
     public void moveTo(Position targetPos, TETile[][] world) {
-        // if overlap with key position, add key
+        // if move to key position, add key
         if (world[targetPos.x][targetPos.y].equals(Tileset.KEY)) {
             this.keyNum += 1;
         }

@@ -6,7 +6,6 @@ import byow.TileEngine.Tileset;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static java.lang.Math.abs;
 
@@ -16,8 +15,8 @@ import static java.lang.Math.abs;
 public class MapGenerator {
 
     // change room numbers(possible) here
-    public static final int minRoomNum = 20;
-    public static final int maxRoomNum = 22; // excluded
+    public static final int minRoomNum = 3;
+    public static final int maxRoomNum = 15; // excluded
 
     public static final int mapKeyNum = 2;
     public static final TETile keyLook = Tileset.KEY;
@@ -28,7 +27,7 @@ public class MapGenerator {
 
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
         TERenderer ter = new TERenderer();
-        ter.initialize(Engine.WIDTH, Engine.HEIGHT);
+        ter.initialize(Engine.WIDTH, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
 
         Engine engine = new Engine();
         TETile[][] dungeonWorld = engine.interactWithInputString(args[0]);
@@ -53,7 +52,6 @@ public class MapGenerator {
         }
 
         // generate rooms, a list of rooms
-        //
 
         List<Room> rooms = new ArrayList<>();
 
@@ -84,12 +82,11 @@ public class MapGenerator {
             addHallways(world, rooms.get(i).randomPosInsideRoom(), rooms.get(i+1).randomPosInsideRoom());
         }
 
-        // generate a locked door
+        // generate a locked door on room wall
         addDoor(rooms, world);
 
         // generate keys in random places
-        List<Position> keys = addKeys(mapKeyNum, rooms, world);
-        // generate door in random place
+        List<Position> keys = addKeys(rooms, world);
 
         // generate avatar in random place
         addAvatar(rooms, world);
@@ -198,10 +195,10 @@ public class MapGenerator {
         me.moveTo(me.curPos, world);
     }
 
-    private static List<Position> addKeys(int mapKeyNum, List<Room> rooms, TETile[][] world) {
+    private static List<Position> addKeys(List<Room> rooms, TETile[][] world) {
         List<Position> keyPosList = new ArrayList<>();
 
-        for (int i = 0; i < mapKeyNum; i++) {
+        for (int i = 0; i < MapGenerator.mapKeyNum; i++) {
             Room randRoom = Room.getARandomRoom(rooms);
             Position keyPos = randRoom.randomPosInsideRoom();
             keyPosList.add(keyPos);

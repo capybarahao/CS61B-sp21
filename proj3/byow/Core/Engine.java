@@ -10,6 +10,8 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    public static final int wOffset = 0;
+    public static final int hOffset = 5; // free space for bottom UI
     public static Random RANDOM;
 
     /**
