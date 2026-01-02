@@ -84,9 +84,14 @@ public class Engine {
             System.exit(0);
         }
 
-        //  move according to following input. will get "wwsssdddd" "was:q"
+        //  MOVE according to following input. will get "wwsssdddd" "was:q"
         InputSource inputSource = new StringInputDevice(getMoveFromInput(uprInput));
 
+        while (inputSource.possibleNextInput()) {
+            char c = inputSource.getNextKey();
+            Position targetPos = Position.nextMovePos(me, c);
+            me.moveTo(targetPos, mapFrame);
+        }
 
         // render final map
         ter.renderFrame(mapFrame);
@@ -124,7 +129,8 @@ public class Engine {
         else if (uprInput.charAt(0) == 'N') {
             for (int i = 0; i < uprInput.length(); i++) {
                 if (uprInput.charAt(i) == 'S') {
-                    movements = uprInput.substring(i+1); // if only "N141S", get an empty string
+                    movements = uprInput.substring(i+1);// if only "N141S", get an empty string
+                    break;
                 }
             }
         }
@@ -138,7 +144,7 @@ public class Engine {
 
 
     private Avatar generateNewAvatar(TETile[][] mapFrame) {
-        // find a random pos in map
+        // find a valid random pos in map
         int x = 0;
         int y = 0;
         while (!mapFrame[x][y].equals(Room.floor)) {
@@ -150,4 +156,5 @@ public class Engine {
         // create avatar
         return new Avatar(randomPos, mapFrame);
     }
+
 }

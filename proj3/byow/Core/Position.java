@@ -24,4 +24,30 @@ public class Position {
         Position pos = new Position(x, y);
         return pos;
     }
+
+    public static Position nextMovePos(Avatar me, char direction) {
+        int x = 0;
+        int y = 0;
+        switch (direction) {
+            case 'W':
+                x = me.curPos.x;
+                y = me.curPos.y + 1;
+                break;
+            case 'A':
+                x = me.curPos.x - 1;
+                y = me.curPos.y;
+                break;
+            case 'S':
+                x = me.curPos.x;
+                y = me.curPos.y - 1;
+                break;
+            case 'D':
+                x = me.curPos.x + 1;
+                y = me.curPos.y;
+                break;
+            default:
+                break;
+        }
+        return new Position(x, y);
+    }
 }

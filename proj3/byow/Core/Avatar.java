@@ -24,11 +24,20 @@ public class Avatar {
         if (world[targetPos.x][targetPos.y].equals(Tileset.KEY)) {
             this.keyNum += 1;
         }
-
-        world[curPos.x][curPos.y] = Room.floor;
-        this.curPos = targetPos;
-        world[curPos.x][curPos.y] = meLook;
-
+        // if movable , move to the floor tile
+        else if (world[targetPos.x][targetPos.y].equals(Room.floor)) {
+            world[curPos.x][curPos.y] = Room.floor;
+            this.curPos = targetPos;
+            world[curPos.x][curPos.y] = meLook;
+        } else if (world[targetPos.x][targetPos.y].equals(Room.wall)) { // if wall
+            return;
+        }
+        else if (world[targetPos.x][targetPos.y].equals(Tileset.LOCKED_DOOR)) {
+            // todo
+        }
+        else {
+            return;
+        }
 
     }
 
