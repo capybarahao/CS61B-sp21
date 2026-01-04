@@ -1,8 +1,9 @@
 package byow.Core;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Position {
+public class Position implements Serializable {
 
     public final int x;
     public final int y;

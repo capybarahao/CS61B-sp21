@@ -26,3 +26,11 @@ If you need to return multiple things, make a class that has multiple fields.
 
 For example, I made a Position class that just
 stored x and y coordinates (and later found it useful to add methods to my Position class).
+
+Debug:
+
+Avatar moveTo method:
+previous:  if (world[targetPos.x][targetPos.y].equals(Tileset.KEY)) 
+when loading it caused issued. not equal any more!
+Don't rely on .equals for tile type checks, as it compares the entire object state.
+Instead, compare a unique identifier like character or description, which are less fragile post-deserialization

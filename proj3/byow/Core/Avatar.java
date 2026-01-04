@@ -3,12 +3,12 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
-import java.util.List;
+import java.io.Serializable;
 
-public class Avatar {
+public class Avatar implements Serializable {
 
     public final TETile meLook = Tileset.AVATAR;
-    public int keyNum = 0;
+    public int curKeyNum = 0;
     public final int viewRange = 5;
     public Position curPos;
     /** full constructor
@@ -19,7 +19,11 @@ public class Avatar {
         world[curPos.x][curPos.y] = meLook;
     }
 
-
+    /**
+     * generate one avatar in a random floor position
+     * @param mapFrame
+     * @return
+     */
     public static Avatar generateNewAvatar(TETile[][] mapFrame) {
         // find a valid random pos in map
         int x = 0;
@@ -35,28 +39,25 @@ public class Avatar {
     }
 
 
-    public void moveTo(Position targetPos, TETile[][] world) {
+    public void moveTo(Position tPos, TETile[][] world) {
         // if move to key position, add key
-        if (world[targetPos.x][targetPos.y].equals(Tileset.KEY)) {
-            this.keyNum += 1;
+        if (world[tPos.x][tPos.y].equals(Tileset.KEY)) {
+            this.curKeyNum += 1;
             world[curPos.x][curPos.y] = Room.floor;
-            this.curPos = targetPos;
+            this.curPos = tPos;
             world[curPos.x][curPos.y] = meLook;
         }
         // if movable , move to the floor tile
-        else if (world[targetPos.x][targetPos.y].equals(Room.floor)) {
+        else if (world[tPos.x][tPos.y].description().equals(Room.floor.description())) {
             world[curPos.x][curPos.y] = Room.floor;
-            this.curPos = targetPos;
+            this.curPos = tPos;
             world[curPos.x][curPos.y] = meLook;
-        } else if (world[targetPos.x][targetPos.y].equals(Room.wall)) { // if wall
+        } else if (world[tPos.x][tPos.y].equals(Room.wall)) { // if wall
             return;
         }
-        else if (world[targetPos.x][targetPos.y].equals(Tileset.LOCKED_DOOR)) {
+        else if (world[tPos.x][tPos.y].equals(Tileset.LOCKED_DOOR)) {
             // todo
             // win
-
-
-
         }
         else {
             return;

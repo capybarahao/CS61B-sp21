@@ -5,6 +5,7 @@ import byow.Input.StringInput;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
+import java.io.File;
 import java.util.Random;
 
 public class Engine {
@@ -15,6 +16,11 @@ public class Engine {
     public static final int wOffset = 0;
     public static final int hOffset = 5; // free space for bottom UI
     public static Random RANDOM;
+
+    /** The current working directory. */
+    public static final File CWD = new File(System.getProperty("user.dir"));
+    /** The SAVE file. */
+    public static final File saveFile = Utils.join(CWD,  "byow/savefile.txt");
 
 
     /**
@@ -55,6 +61,8 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+
+        // initialize TERenderer
         ter.initialize(Engine.WIDTH, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
 
         String uprInput = input.toUpperCase();
@@ -74,12 +82,13 @@ public class Engine {
             me = Avatar.generateNewAvatar(mapFrame);
         }
 
-        // todo if it's load game, read save, get map, get avatar, and seed
+        // if it's load game, read save, get map, get avatar, and seed
         else if (uprInput.charAt(0) == 'L') {
-            
-            
-            
-            
+            Save loadedSave = Utils.readObject(saveFile, Save.class);
+            mapFrame = loadedSave.getMapFrame();
+            me = loadedSave.getMe();
+            seed = loadedSave.getSeed();
+            RANDOM = new Random(seed);
 
         } else { // not start with N or L, error arguments
             System.out.println("input format error");
@@ -92,10 +101,7 @@ public class Engine {
         while (inputSource.possibleNextInput()) {
             char c = inputSource.getNextKey();
             if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
-                // todo save and quit
-
-
-
+                // save and quit
                 saveProgress(mapFrame, me, seed);
                 return mapFrame;
             }
@@ -106,20 +112,12 @@ public class Engine {
         // render final map
         ter.renderFrame(mapFrame);
 
-        // if :q save and quit
-
-
-
-
         return mapFrame;
     }
 
     private static void saveProgress(TETile[][] finalMap, Avatar me, long seed) {
         Save newSave = new Save(finalMap, me , seed);
-
-
-
-
+        Utils.writeObject(saveFile, newSave);
     }
 
     private static Save loadProgress() {
