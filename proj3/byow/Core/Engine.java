@@ -6,6 +6,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 public class Engine {
@@ -70,6 +71,7 @@ public class Engine {
         Avatar me = null;
         long seed = 0;
 
+
         // if it's new game, generate initial map, generate avatar,
 
         if (uprInput.charAt(0) == 'N') {
@@ -84,6 +86,10 @@ public class Engine {
 
         // if it's load game, read save, get map, get avatar, and seed
         else if (uprInput.charAt(0) == 'L') {
+            if (!saveFile.exists()) {
+                System.out.println("no save found");
+                System.exit(0);
+            }
             Save loadedSave = Utils.readObject(saveFile, Save.class);
             mapFrame = loadedSave.getMapFrame();
             me = loadedSave.getMe();
@@ -116,6 +122,11 @@ public class Engine {
     }
 
     private static void saveProgress(TETile[][] finalMap, Avatar me, long seed) {
+        try {
+            saveFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Save newSave = new Save(finalMap, me , seed);
         Utils.writeObject(saveFile, newSave);
     }

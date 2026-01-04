@@ -29,8 +29,15 @@ stored x and y coordinates (and later found it useful to add methods to my Posit
 
 Debug:
 
-Avatar moveTo method:
+- Avatar moveTo method:
+
 previous:  if (world[targetPos.x][targetPos.y].equals(Tileset.KEY)) 
+
 when loading it caused issued. not equal any more!
+
 Don't rely on .equals for tile type checks, as it compares the entire object state.
 Instead, compare a unique identifier like character or description, which are less fragile post-deserialization
+
+Deserialization Creates New Instances: When you serialize and then deserialize a TETile[][].
+Java reconstructs entirely new TETile objects from the byte stream. 
+Even if the fields are identical, these are different objects in memory.
