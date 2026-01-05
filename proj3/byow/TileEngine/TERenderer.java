@@ -2,6 +2,7 @@ package byow.TileEngine;
 
 import byow.Core.Avatar;
 import byow.Core.Position;
+import byow.Core.Utils;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.Color;
@@ -117,7 +118,7 @@ public class TERenderer {
         int sightRange = me.viewRange;
         StdDraw.clear(new Color(0, 0, 0));
 
-        for (Position pos: circlePos(sightRange, mePos)) {
+        for (Position pos: Utils.circlePos(sightRange, mePos)) {
             try {
                 world[pos.x][pos.y].draw(pos.x + xOffset, pos.y + yOffset);
             } catch (Exception e) {
@@ -127,24 +128,4 @@ public class TERenderer {
         StdDraw.show();
     }
 
-    //
-    // s radius
-
-    /**
-     *
-     * @param s circle radius
-     * @param mePos the circle center position
-     * @return a list of positions, indicating positions around a certain position
-     */
-    public static List<Position> circlePos(int s, Position mePos) {
-        List<Position> positions = new ArrayList<>();
-        for (int dx = -s; dx <= s; dx++) {
-            for (int dy = -s; dy <= s; dy++) {
-                if (dx * dx + dy * dy <= s * s) {
-                    positions.add(new Position(mePos.x + dx, mePos.y + dy));
-                }
-            }
-        }
-        return positions;
-    }
 }

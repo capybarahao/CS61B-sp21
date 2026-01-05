@@ -38,7 +38,7 @@ public class Engine {
         TETile[][] mapFrame = null;
         Avatar me = null;
         long seed = 0;
-
+        boolean wholeView = false;
 
         showMainMenu(); // change main menu style here
         char cmd = Utils.solicitCommand();
@@ -67,20 +67,29 @@ public class Engine {
 
         while (!gameSuccess) {
 
-            /// //  this part align with interactWithInputString. change both
+            /// //  this part align with interactWithInputString. slightly different
             InputSources inputSource = new KeyboardInput();
-            char direction = inputSource.getNextKey();
-            if (direction == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
+            char c = inputSource.getNextKey();
+            if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
                 // save and quit
                 saveProgressAndQuit(mapFrame, me, seed);
             }
-            me.moveTo(Position.nextMovePos(me, direction), mapFrame);
+            if (c == 'V' ) {
+                wholeView = !wholeView;
+            }
+            me.moveTo(Position.nextMovePos(me, c), mapFrame);
             /////////
 
-            ter.renderLimitFrame(mapFrame, me);
+            if (wholeView) {
+                ter.renderFrame(mapFrame);
+            }
+            else {
+                ter.renderLimitFrame(mapFrame, me);
+            }
             drawUI(me);
             drawRigidUI();
         }
+
         showSuccess();
 
     }
@@ -247,7 +256,7 @@ public class Engine {
         Font font = new Font("Monospaced", Font.BOLD, 15);
         StdDraw.setFont(font);
 
-        StdDraw.text(5, 4, "Move - WASD");
+        StdDraw.text(7, 4, "Move - WASD View - V");
         StdDraw.text(6, 3, "Save & Quit - :q");
 
         // set font back

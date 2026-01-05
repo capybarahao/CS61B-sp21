@@ -6,6 +6,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
 
@@ -79,6 +81,24 @@ public class Utils {
             System.out.println("no save found");
             System.exit(0);
         }
+    }
+
+    /**
+     *
+     * @param s circle radius
+     * @param mePos the circle center position
+     * @return a list of positions, indicating positions around a certain position
+     */
+    public static List<Position> circlePos(int s, Position mePos) {
+        List<Position> positions = new ArrayList<>();
+        for (int dx = -s; dx <= s; dx++) {
+            for (int dy = -s; dy <= s; dy++) {
+                if (dx * dx + dy * dy <= s * s) {
+                    positions.add(new Position(mePos.x + dx, mePos.y + dy));
+                }
+            }
+        }
+        return positions;
     }
 
     /* SERIALIZATION UTILITIES */
