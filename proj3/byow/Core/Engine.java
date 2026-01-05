@@ -4,7 +4,9 @@ import byow.Input.InputSources;
 import byow.Input.StringInput;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
@@ -29,7 +31,14 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+        // initialize TERenderer
         ter.initialize(Engine.WIDTH, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
+        TETile[][] mapFrame = null;
+        Avatar me = null;
+        long seed = 0;
+
+        showMainMenu(WIDTH, HEIGHT);
+
 
     }
 
@@ -101,7 +110,8 @@ public class Engine {
             System.exit(0);
         }
 
-        //  MOVE according to following input. will get like "" "wwsssdddd" "was:q" ":q"
+        //  MOVE according to following input after"N1212S" or "L"
+        //  will get like "" "wwsssdddd" "was:q" ":q"
         InputSources inputSource = new StringInput(Utils.getMoveFromInput(uprInput));
 
         while (inputSource.possibleNextInput()) {
@@ -109,6 +119,8 @@ public class Engine {
             if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
                 // save and quit
                 saveProgress(mapFrame, me, seed);
+                System.out.println("saved");
+                System.exit(0);
                 return mapFrame;
             }
             Position targetPos = Position.nextMovePos(me, c);
@@ -131,13 +143,16 @@ public class Engine {
         Utils.writeObject(saveFile, newSave);
     }
 
-    private static Save loadProgress() {
-        Save save = null;
+    private static void showMainMenu(int width, int height) {
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        Font font = new Font("Monospaced", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.text(width/2, height/2 +5, "CS61B: Maze");
+        StdDraw.text(width/2, height/2 +2, "New Game (N)");
+        StdDraw.text(width/2, height/2, "Load Game (L)");
+        StdDraw.text(width/2, height/2 -2, "Quit (Q)");
 
-
-
-
-
-        return save;
+        StdDraw.show();
     }
 }
