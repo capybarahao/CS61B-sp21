@@ -1,6 +1,7 @@
 package byow.Core;
 
 import byow.Input.InputSources;
+import byow.Input.KeyboardInput;
 import byow.Input.StringInput;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
@@ -36,8 +37,54 @@ public class Engine {
         TETile[][] mapFrame = null;
         Avatar me = null;
         long seed = 0;
+        boolean gameSuccess = false;
 
-        showMainMenu(WIDTH, HEIGHT);
+        showMainMenu(); // change main menu style here
+        char cmd = Utils.solicitCommand();
+        switch (cmd) {
+            case 'N':
+                //starNewGame;
+                break;
+            case 'L':
+                //load, set data
+                if (!saveFile.exists()) {
+                    System.out.println("no save found");
+                    System.exit(0);
+                }
+                Save loadedSave = Utils.readObject(saveFile, Save.class);
+                mapFrame = loadedSave.getMapFrame();
+                me = loadedSave.getMe();
+                seed = loadedSave.getSeed();
+                RANDOM = new Random(seed);
+
+                break;
+            case 'Q':
+                System.out.println("quited");
+                System.exit(0);
+        }
+
+        ter.renderFrame(mapFrame);
+        drawUI(me);
+
+        while (!gameSuccess) {
+
+            /// //  this part align with interactWithInputString. change both
+            InputSources inputSource = new KeyboardInput();
+            char c = inputSource.getNextKey();
+            if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
+                // save and quit
+                saveProgress(mapFrame, me, seed);
+                System.out.println("saved");
+                System.exit(0);
+            }
+            Position targetPos = Position.nextMovePos(me, c);
+            me.moveTo(targetPos, mapFrame);
+            /////////
+
+            ter.renderFrame(mapFrame);
+            drawUI(me);
+        }
+
 
 
     }
@@ -112,8 +159,9 @@ public class Engine {
 
         //  MOVE according to following input after"N1212S" or "L"
         //  will get like "" "wwsssdddd" "was:q" ":q"
-        InputSources inputSource = new StringInput(Utils.getMoveFromInput(uprInput));
+        InputSources inputSource = new StringInput(Utils.getMoveFromStringInput(uprInput));
 
+        /// //////// this part align with interactKeyboard. change both
         while (inputSource.possibleNextInput()) {
             char c = inputSource.getNextKey();
             if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
@@ -121,11 +169,11 @@ public class Engine {
                 saveProgress(mapFrame, me, seed);
                 System.out.println("saved");
                 System.exit(0);
-                return mapFrame;
             }
             Position targetPos = Position.nextMovePos(me, c);
             me.moveTo(targetPos, mapFrame);
         }
+        /// ////////
 
         // render final map
         ter.renderFrame(mapFrame);
@@ -143,16 +191,36 @@ public class Engine {
         Utils.writeObject(saveFile, newSave);
     }
 
-    private static void showMainMenu(int width, int height) {
+    private static void showMainMenu() {
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
+        Font originFont = StdDraw.getFont();
         Font font = new Font("Monospaced", Font.BOLD, 30);
         StdDraw.setFont(font);
-        StdDraw.text(width/2, height/2 +5, "CS61B: Maze");
-        StdDraw.text(width/2, height/2 +2, "New Game (N)");
-        StdDraw.text(width/2, height/2, "Load Game (L)");
-        StdDraw.text(width/2, height/2 -2, "Quit (Q)");
+        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 +5, "CS61B: Maze");
+        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 +2, "New Game (N)");
+        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2, "Load Game (L)");
+        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 -2, "Quit (Q)");
+
+        // set font back
+        StdDraw.setFont(originFont);
 
         StdDraw.show();
     }
+
+    public static void drawUI(Avatar me) {
+
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.line(0, 2, Engine.WIDTH, 2);
+
+
+        int curKeyNum = me.curKeyNum;
+        StdDraw.text(5, 1, "Keys: " + String.valueOf(curKeyNum));
+
+        String reminder;
+
+
+        StdDraw.show();
+    }
+
 }

@@ -41,7 +41,7 @@ public class Avatar implements Serializable {
 
     public void moveTo(Position tPos, TETile[][] world) {
         // if move to key position, add key
-        if (world[tPos.x][tPos.y].equals(Tileset.KEY)) {
+        if (world[tPos.x][tPos.y].description().equals(Tileset.KEY.description())) {
             this.curKeyNum += 1;
             world[curPos.x][curPos.y] = Room.floor;
             this.curPos = tPos;
@@ -52,12 +52,13 @@ public class Avatar implements Serializable {
             world[curPos.x][curPos.y] = Room.floor;
             this.curPos = tPos;
             world[curPos.x][curPos.y] = meLook;
-        } else if (world[tPos.x][tPos.y].equals(Room.wall)) { // if wall
+        } else if (world[tPos.x][tPos.y].description().equals(Room.wall.description())) { // if wall
             return;
         }
-        else if (world[tPos.x][tPos.y].equals(Tileset.LOCKED_DOOR)) {
+        else if (world[tPos.x][tPos.y].description().equals(Tileset.LOCKED_DOOR.description())) {
             // todo
-            // win
+            // if enough keys win, or pop reminder
+
         }
         else {
             return;

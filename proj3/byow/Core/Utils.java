@@ -1,5 +1,7 @@
 package byow.Core;
 
+import edu.princeton.cs.introcs.StdDraw;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -26,7 +28,7 @@ public class Utils {
         return seed;
     }
 
-    public static String getMoveFromInput(String uprInput) {
+    public static String getMoveFromStringInput(String uprInput) {
         String movements = "";
 
         if (uprInput.charAt(0) == 'L') {
@@ -42,6 +44,34 @@ public class Utils {
         }
         return movements;
 
+    }
+
+    public static char solicitCommand() {
+        char cmd = 0;
+        boolean getValid = false;
+        while (!getValid) {
+            if (StdDraw.hasNextKeyTyped()) {
+                switch (StdDraw.nextKeyTyped()) {
+                    case 'N':
+                    case 'n':
+                        cmd = 'N';
+                        getValid = true;
+                        break;
+                    case 'L':
+                    case 'l':
+                        cmd = 'L';
+                        getValid = true;
+                        break;
+                    case 'Q':
+                    case 'q':
+                        cmd = 'Q';
+                        getValid = true;
+                        break;
+                }
+            }
+        }
+
+        return cmd;
     }
 
     /* SERIALIZATION UTILITIES */
