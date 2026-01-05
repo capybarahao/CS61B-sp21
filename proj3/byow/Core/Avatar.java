@@ -57,13 +57,14 @@ public class Avatar implements Serializable {
         }
         else if (world[tPos.x][tPos.y].description().equals(Tileset.LOCKED_DOOR.description())) {
             // todo
-            // if enough keys win, or pop reminder
-
+            // if enough keys win
+            if (this.curKeyNum == MapGenerator.mapKeyNum) {
+                Engine.gameSuccess = true;
+            }
         }
         else {
             return;
         }
-
     }
 
 }

@@ -17,9 +17,10 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    public static final int wOffset = 0;
+    public static final int wOffset = 5;
     public static final int hOffset = 5; // free space for bottom UI
     public static Random RANDOM;
+    public static boolean gameSuccess = false;
 
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
@@ -33,11 +34,11 @@ public class Engine {
      */
     public void interactWithKeyboard() {
         // initialize TERenderer
-        ter.initialize(Engine.WIDTH, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
+        ter.initialize(Engine.WIDTH + wOffset, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
         TETile[][] mapFrame = null;
         Avatar me = null;
         long seed = 0;
-        boolean gameSuccess = false;
+
 
         showMainMenu(); // change main menu style here
         char cmd = Utils.solicitCommand();
@@ -47,10 +48,7 @@ public class Engine {
                 break;
             case 'L':
                 //load, set data
-                if (!saveFile.exists()) {
-                    System.out.println("no save found");
-                    System.exit(0);
-                }
+                Utils.checkSavefileExist(saveFile);
                 Save loadedSave = Utils.readObject(saveFile, Save.class);
                 mapFrame = loadedSave.getMapFrame();
                 me = loadedSave.getMe();
@@ -63,29 +61,27 @@ public class Engine {
                 System.exit(0);
         }
 
-        ter.renderFrame(mapFrame);
+        ter.renderLimitFrame(mapFrame, me);
         drawUI(me);
+        drawRigidUI();
 
         while (!gameSuccess) {
 
             /// //  this part align with interactWithInputString. change both
             InputSources inputSource = new KeyboardInput();
-            char c = inputSource.getNextKey();
-            if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
+            char direction = inputSource.getNextKey();
+            if (direction == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
                 // save and quit
-                saveProgress(mapFrame, me, seed);
-                System.out.println("saved");
-                System.exit(0);
+                saveProgressAndQuit(mapFrame, me, seed);
             }
-            Position targetPos = Position.nextMovePos(me, c);
-            me.moveTo(targetPos, mapFrame);
+            me.moveTo(Position.nextMovePos(me, direction), mapFrame);
             /////////
 
-            ter.renderFrame(mapFrame);
+            ter.renderLimitFrame(mapFrame, me);
             drawUI(me);
+            drawRigidUI();
         }
-
-
+        showSuccess();
 
     }
 
@@ -120,7 +116,7 @@ public class Engine {
         // that works for many different input types.
 
         // initialize TERenderer
-        ter.initialize(Engine.WIDTH, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
+        ter.initialize(Engine.WIDTH + wOffset, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
 
         String uprInput = input.toUpperCase();
         TETile[][] mapFrame = null;
@@ -142,10 +138,7 @@ public class Engine {
 
         // if it's load game, read save, get map, get avatar, and seed
         else if (uprInput.charAt(0) == 'L') {
-            if (!saveFile.exists()) {
-                System.out.println("no save found");
-                System.exit(0);
-            }
+            Utils.checkSavefileExist(saveFile);
             Save loadedSave = Utils.readObject(saveFile, Save.class);
             mapFrame = loadedSave.getMapFrame();
             me = loadedSave.getMe();
@@ -163,15 +156,12 @@ public class Engine {
 
         /// //////// this part align with interactKeyboard. change both
         while (inputSource.possibleNextInput()) {
-            char c = inputSource.getNextKey();
-            if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
+            char direction = inputSource.getNextKey();
+            if (direction == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
                 // save and quit
-                saveProgress(mapFrame, me, seed);
-                System.out.println("saved");
-                System.exit(0);
+                saveProgressAndQuit(mapFrame, me, seed);
             }
-            Position targetPos = Position.nextMovePos(me, c);
-            me.moveTo(targetPos, mapFrame);
+            me.moveTo(Position.nextMovePos(me, direction), mapFrame);
         }
         /// ////////
 
@@ -181,7 +171,7 @@ public class Engine {
         return mapFrame;
     }
 
-    private static void saveProgress(TETile[][] finalMap, Avatar me, long seed) {
+    private static void saveProgressAndQuit(TETile[][] finalMap, Avatar me, long seed) {
         try {
             saveFile.createNewFile();
         } catch (IOException e) {
@@ -189,6 +179,8 @@ public class Engine {
         }
         Save newSave = new Save(finalMap, me , seed);
         Utils.writeObject(saveFile, newSave);
+        System.out.println("saved");
+        System.exit(0);
     }
 
     private static void showMainMenu() {
@@ -208,19 +200,59 @@ public class Engine {
         StdDraw.show();
     }
 
-    public static void drawUI(Avatar me) {
-
+    private static void showSuccess() {
+        StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
-        StdDraw.line(0, 2, Engine.WIDTH, 2);
+        Font originFont = StdDraw.getFont();
+        Font font = new Font("Monospaced", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 +5, "!");
 
-
-        int curKeyNum = me.curKeyNum;
-        StdDraw.text(5, 1, "Keys: " + String.valueOf(curKeyNum));
-
-        String reminder;
-
+        // set font back
+        StdDraw.setFont(originFont);
 
         StdDraw.show();
     }
 
+    public static void drawUI(Avatar me) {
+
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.line(0, 2, Engine.WIDTH + wOffset, 2);
+        Font originFont = StdDraw.getFont();
+        Font font = new Font("Monospaced", Font.BOLD, 15);
+        StdDraw.setFont(font);
+
+        int curKeyNum = me.curKeyNum;
+        StdDraw.text(Engine.WIDTH/2, 1, "Key: " + String.valueOf(curKeyNum));
+
+        String reminder;
+        if (me.curKeyNum == MapGenerator.mapKeyNum) {
+            reminder = "Find Door!";
+
+        }
+        else {
+            reminder = "Find All Keys!";
+        }
+        StdDraw.text(Engine.WIDTH/2, 3, reminder);
+
+        // set font back
+        StdDraw.setFont(originFont);
+
+        StdDraw.show();
+    }
+
+    public static void drawRigidUI() {
+        StdDraw.setPenColor(Color.WHITE);
+        Font originFont = StdDraw.getFont();
+        Font font = new Font("Monospaced", Font.BOLD, 15);
+        StdDraw.setFont(font);
+
+        StdDraw.text(5, 4, "Move - WASD");
+        StdDraw.text(6, 3, "Save & Quit - :q");
+
+        // set font back
+        StdDraw.setFont(originFont);
+
+        StdDraw.show();
+    }
 }

@@ -74,6 +74,13 @@ public class Utils {
         return cmd;
     }
 
+    public static void checkSavefileExist(File saveFile) {
+        if (!saveFile.exists()) {
+            System.out.println("no save found");
+            System.exit(0);
+        }
+    }
+
     /* SERIALIZATION UTILITIES */
 
     /** Returns a byte array containing the serialized contents of OBJ. */
