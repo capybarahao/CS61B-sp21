@@ -1,7 +1,11 @@
 package byow.Core;
 
+import byow.Input.InputSources;
+import byow.Input.KeyboardInput;
+import byow.InputDemo.InputSource;
 import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -72,8 +76,39 @@ public class Utils {
                 }
             }
         }
-
         return cmd;
+    }
+
+    /**
+     *
+     * @return string "N####S"
+     */
+    public static String solicitSeed() {
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        Font originFont = StdDraw.getFont();
+        Font font = new Font("Monospaced", Font.BOLD, 20);
+        StdDraw.setFont(font);
+
+        StdDraw.text(Engine.WIDTH/2,Engine.HEIGHT/2+5, "Enter seed number. Finish with S");
+        StdDraw.show();
+
+        String seedString = "N";
+        InputSources IS = new KeyboardInput();
+        while (true) {
+            char c = Character.toUpperCase(IS.getNextKey());
+            if (c == 'S') {
+                seedString = seedString + c;
+                break;
+            }
+            seedString = seedString + c;
+            StdDraw.clear(Color.BLACK);
+            StdDraw.text(Engine.WIDTH/2,Engine.HEIGHT/2+5, "Enter seed number. Finish with S");
+            StdDraw.text(Engine.WIDTH/2,Engine.HEIGHT/2+3, seedString.substring(1));
+            StdDraw.show();
+        }
+        StdDraw.setFont(originFont);
+        return seedString;
     }
 
     public static void checkSavefileExist(File saveFile) {

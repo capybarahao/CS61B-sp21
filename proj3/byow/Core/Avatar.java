@@ -48,11 +48,11 @@ public class Avatar implements Serializable {
             world[curPos.x][curPos.y] = meLook;
         }
         // if movable , move to the floor tile
-        else if (world[tPos.x][tPos.y].description().equals(Room.floor.description())) {
+        else if (world[tPos.x][tPos.y].description().equals(Tileset.FLOOR.description())) {
             world[curPos.x][curPos.y] = Room.floor;
             this.curPos = tPos;
             world[curPos.x][curPos.y] = meLook;
-        } else if (world[tPos.x][tPos.y].description().equals(Room.wall.description())) { // if wall
+        } else if (world[tPos.x][tPos.y].description().equals(Tileset.WALL.description())) { // if wall
             return;
         }
         else if (world[tPos.x][tPos.y].description().equals(Tileset.LOCKED_DOOR.description())) {

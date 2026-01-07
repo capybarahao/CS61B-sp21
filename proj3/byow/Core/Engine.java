@@ -45,6 +45,12 @@ public class Engine {
         switch (cmd) {
             case 'N':
                 //starNewGame;
+                String seedString = Utils.solicitSeed();
+                seed = Utils.getSeedFromInput(seedString);
+                RANDOM = new Random(seed);
+
+                mapFrame = MapGenerator.generate();// generate map. since RANDOM is set, no input needed
+                me = Avatar.generateNewAvatar(mapFrame);
                 break;
             case 'L':
                 //load, set data
@@ -176,6 +182,8 @@ public class Engine {
 
         // render final map
         ter.renderFrame(mapFrame);
+        drawUI(me);
+        drawRigidUI();
 
         return mapFrame;
     }
@@ -205,7 +213,6 @@ public class Engine {
 
         // set font back
         StdDraw.setFont(originFont);
-
         StdDraw.show();
     }
 
@@ -213,9 +220,9 @@ public class Engine {
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
         Font originFont = StdDraw.getFont();
-        Font font = new Font("Monospaced", Font.BOLD, 30);
+        Font font = new Font("Monospaced", Font.ITALIC, 30);
         StdDraw.setFont(font);
-        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 +5, "!");
+        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 +5, "phwww, that was tough...");
 
         // set font back
         StdDraw.setFont(originFont);
@@ -223,12 +230,12 @@ public class Engine {
         StdDraw.show();
     }
 
-    public static void drawUI(Avatar me) {
+    private static void drawUI(Avatar me) {
 
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.line(0, 2, Engine.WIDTH + wOffset, 2);
         Font originFont = StdDraw.getFont();
-        Font font = new Font("Monospaced", Font.BOLD, 15);
+        Font font = new Font("SansSerif", Font.BOLD, 14);
         StdDraw.setFont(font);
 
         int curKeyNum = me.curKeyNum;
@@ -250,10 +257,10 @@ public class Engine {
         StdDraw.show();
     }
 
-    public static void drawRigidUI() {
+    private static void drawRigidUI() {
         StdDraw.setPenColor(Color.WHITE);
         Font originFont = StdDraw.getFont();
-        Font font = new Font("Monospaced", Font.BOLD, 15);
+        Font font = new Font("SansSerif", Font.BOLD, 14);
         StdDraw.setFont(font);
 
         StdDraw.text(7, 4, "Move - WASD View - V");

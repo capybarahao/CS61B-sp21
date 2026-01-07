@@ -4,6 +4,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,12 +93,12 @@ public class MapGenerator {
 
         // walls then
         for (int i = 0; i < room.width; i++) {
-            world[room.pos.x + i][room.pos.y] = Room.wall;
-            world[room.pos.x + i][room.pos.y + room.height - 1] = Room.wall;
+            world[room.pos.x + i][room.pos.y] = randomPinkWall();
+            world[room.pos.x + i][room.pos.y + room.height - 1] = randomPinkWall();
         }
         for (int i = 0; i < room.height; i++) {
-            world[room.pos.x][room.pos.y + i] = Room.wall;
-            world[room.pos.x + room.width - 1][room.pos.y + i] = Room.wall;
+            world[room.pos.x][room.pos.y + i] = randomPinkWall();
+            world[room.pos.x + room.width - 1][room.pos.y + i] = randomPinkWall();
         }
     }
 
@@ -151,17 +152,18 @@ public class MapGenerator {
     }
 
     private static void addWallToHallwayTile(TETile[][] world, int x, int y) {
+
         if (world[x][y+1] == Tileset.NOTHING) {
-            world[x][y+1] = Room.wall;
+            world[x][y+1] = randomPinkWall();
         }
         if (world[x][y-1] == Tileset.NOTHING) {
-            world[x][y-1] = Room.wall;
+            world[x][y-1] = randomPinkWall();
         }
         if (world[x+1][y] == Tileset.NOTHING) {
-            world[x+1][y] = Room.wall;
+            world[x+1][y] = randomPinkWall();
         }
         if (world[x-1][y] == Tileset.NOTHING) {
-            world[x-1][y] = Room.wall;
+            world[x-1][y] = randomPinkWall();
         }
     }
 
@@ -184,9 +186,23 @@ public class MapGenerator {
         Room randRoom = Room.getARandomRoom(rooms);
 
         Position doorPos = randRoom.randomPosOnWall();
-        while (!world[doorPos.x][doorPos.y].equals(Room.wall)) {
+        while (!world[doorPos.x][doorPos.y].description().equals(Tileset.WALL.description())) {
             doorPos = randRoom.randomPosOnWall();
         }
         world[doorPos.x][doorPos.y] = Tileset.LOCKED_DOOR;
+    }
+
+    public static final Color[] PINK_PALETTE = {
+            new Color(204, 61, 132),   // Softer Bright Pink
+            new Color(204, 72, 144),   // Softer Deep Pink
+            new Color(204, 120, 162),  // Softer Hot Pink
+            new Color(204, 61, 169),   // Softer Vivid Pink
+            new Color(204, 110, 179),  // Softer Vibrant Pink
+            new Color(136, 69, 100)    // Softer Dark Pink // Dark Pink
+    };
+
+    public static TETile randomPinkWall() {
+        int colorIndex = Engine.RANDOM.nextInt(PINK_PALETTE.length);
+        return new TETile('#', PINK_PALETTE[colorIndex], Color.darkGray, "wall");
     }
 }
