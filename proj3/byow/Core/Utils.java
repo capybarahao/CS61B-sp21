@@ -96,16 +96,18 @@ public class Utils {
         String seedString = "N";
         InputSources IS = new KeyboardInput();
         while (true) {
-            char c = Character.toUpperCase(IS.getNextKey());
-            if (c == 'S') {
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = Character.toUpperCase(IS.getNextKey());
+                if (c == 'S') {
+                    seedString = seedString + c;
+                    break;
+                }
                 seedString = seedString + c;
-                break;
+                StdDraw.clear(Color.BLACK);
+                StdDraw.text(Engine.WIDTH / 2, Engine.HEIGHT / 2 + 5, "Enter seed number. Finish with S");
+                StdDraw.text(Engine.WIDTH / 2, Engine.HEIGHT / 2 + 3, seedString.substring(1));
+                StdDraw.show();
             }
-            seedString = seedString + c;
-            StdDraw.clear(Color.BLACK);
-            StdDraw.text(Engine.WIDTH/2,Engine.HEIGHT/2+5, "Enter seed number. Finish with S");
-            StdDraw.text(Engine.WIDTH/2,Engine.HEIGHT/2+3, seedString.substring(1));
-            StdDraw.show();
         }
         StdDraw.setFont(originFont);
         return seedString;

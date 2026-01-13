@@ -67,33 +67,59 @@ public class Engine {
                 System.exit(0);
         }
 
-        ter.renderLimitFrame(mapFrame, me);
-        drawUI(me);
-        drawRigidUI();
+        // Add state variables outside the loop
+        boolean awaitingCommand = false;  // Tracks if we're waiting for a command after ':'
 
         while (!gameSuccess) {
+            InputSources inputSource = new KeyboardInput();  // Could be created outside loop if not changing
 
-            /// //  this part align with interactWithInputString. slightly different
-            InputSources inputSource = new KeyboardInput();
-            char c = inputSource.getNextKey();
-            if (c == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
-                // save and quit
-                saveProgressAndQuit(mapFrame, me, seed);
-            }
-            if (c == 'V' ) {
-                wholeView = !wholeView;
-            }
-            me.moveTo(Position.nextMovePos(me, c), mapFrame);
-            /////////
+            // Non-blocking input handling using StdDraw directly for check
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = inputSource.getNextKey();  // This now returns immediately since we checked hasNextKeyTyped()
 
+                if (awaitingCommand) {
+                    // We were waiting after ':'
+                    if (c == 'Q') {
+                        // Full :Q detected—save and quit
+                        saveProgressAndQuit(mapFrame, me, seed);
+                    } else {
+                        // Not Q: Ignore or handle as new input
+                        // For example, process this c as a regular key if desired
+                        if (c == 'V') {
+                            wholeView = !wholeView;
+                        } else {
+                            me.moveTo(Position.nextMovePos(me, c), mapFrame);
+                        }
+                    }
+                    awaitingCommand = false;  // Reset state
+                } else if (c == ':') {
+                    // Start awaiting the next key for command
+                    awaitingCommand = true;
+                    // Check if there's already a next key queued (for fast typing)
+                    if (StdDraw.hasNextKeyTyped() && inputSource.getNextKey() == 'Q') {
+                        saveProgressAndQuit(mapFrame, me, seed);
+                    }
+                } else if (c == 'V') {
+                    wholeView = !wholeView;
+                } else {
+                    // Handle movement
+                    me.moveTo(Position.nextMovePos(me, c), mapFrame);
+                }
+            }
+
+            // Always render/update display, even without input
             if (wholeView) {
                 ter.renderFrame(mapFrame);
-            }
-            else {
+            } else {
                 ter.renderLimitFrame(mapFrame, me);
             }
             drawUI(me);
             drawRigidUI();
+            showMouseHover(mapFrame);  // Updates in real-time
+
+            // Show the frame and pause
+            StdDraw.show();
+            StdDraw.pause(20);  // ~50 FPS
         }
 
         showSuccess();
@@ -256,6 +282,31 @@ public class Engine {
 
         StdDraw.show();
     }
+    private static void showMouseHover(TETile[][] mapFrame) {
+        // Get mouse coordinates
+        double mouseXDouble = StdDraw.mouseX();
+        double mouseYDouble = StdDraw.mouseY();
+
+        // Convert to tile indices, subtracting offsets
+        int tileX = (int) mouseXDouble - Engine.wOffset;
+        int tileY = (int) mouseYDouble - Engine.hOffset;
+
+        // Check if mouse is within map bounds (after offset adjustment)
+        int width = mapFrame.length;  // Should be Engine.WIDTH
+        int height = mapFrame[0].length;  // Should be Engine.HEIGHT
+        if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
+            TETile tile = mapFrame[tileX][tileY];
+            String tileType = tile.description();  // Assuming description() returns the type string
+
+            // Draw the tile type (position adjusted if needed; here kept as bottom-right)
+            StdDraw.setPenColor(Color.WHITE);
+            Font originFont = StdDraw.getFont();
+            Font font = new Font("SansSerif", Font.BOLD, 14);
+            StdDraw.setFont(font);
+            StdDraw.text(Engine.WIDTH - 4, 1, tileType);  // Add offsets to text position if UI is shifted
+            StdDraw.setFont(originFont);  // Reset font
+        }
+    }
 
     private static void drawRigidUI() {
         StdDraw.setPenColor(Color.WHITE);
@@ -271,4 +322,6 @@ public class Engine {
 
         StdDraw.show();
     }
+
+
 }
