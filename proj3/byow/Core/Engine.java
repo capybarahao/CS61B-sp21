@@ -156,9 +156,6 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
-        // initialize TERenderer
-        ter.initialize(Engine.WIDTH + wOffset, Engine.HEIGHT + Engine.hOffset, Engine.wOffset, Engine.hOffset);
-
         String uprInput = input.toUpperCase();
         TETile[][] mapFrame = null;
         Avatar me = null;
@@ -205,11 +202,6 @@ public class Engine {
             me.moveTo(Position.nextMovePos(me, direction), mapFrame);
         }
         /// ////////
-
-        // render final map
-        ter.renderFrame(mapFrame);
-        drawUI(me);
-        drawRigidUI();
 
         return mapFrame;
     }
