@@ -246,9 +246,9 @@ public class Engine {
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
         Font originFont = StdDraw.getFont();
-        Font font = new Font("Monospaced", Font.ITALIC, 30);
+        Font font = new Font("Monospaced", Font.BOLD, 30);
         StdDraw.setFont(font);
-        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 +5, "phwww, that was tough...");
+        StdDraw.text(Engine.WIDTH /2, Engine.HEIGHT /2 +5, "Phew, that was fun...");
 
         // set font back
         StdDraw.setFont(originFont);
