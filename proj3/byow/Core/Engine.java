@@ -81,7 +81,8 @@ public class Engine {
                     // We were waiting after ':'
                     if (c == 'Q') {
                         // Full :Q detected—save and quit
-                        saveProgressAndQuit(mapFrame, me, seed);
+                        saveProgress(mapFrame, me, seed);
+                        System.exit(0);
                     } else {
                         // Not Q: Ignore or handle as new input
                         // For example, process this c as a regular key if desired
@@ -97,7 +98,8 @@ public class Engine {
                     awaitingCommand = true;
                     // Check if there's already a next key queued (for fast typing)
                     if (StdDraw.hasNextKeyTyped() && inputSource.getNextKey() == 'Q') {
-                        saveProgressAndQuit(mapFrame, me, seed);
+                        saveProgress(mapFrame, me, seed);
+                        System.exit(0);
                     }
                 } else if (c == 'V') {
                     wholeView = !wholeView;
@@ -197,7 +199,8 @@ public class Engine {
             char direction = inputSource.getNextKey();
             if (direction == ':' && inputSource.possibleNextInput() && inputSource.getNextKey() == 'Q') { // detect :q
                 // save and quit
-                saveProgressAndQuit(mapFrame, me, seed);
+                saveProgress(mapFrame, me, seed);
+                return mapFrame;
             }
             me.moveTo(Position.nextMovePos(me, direction), mapFrame);
         }
@@ -206,7 +209,7 @@ public class Engine {
         return mapFrame;
     }
 
-    private static void saveProgressAndQuit(TETile[][] finalMap, Avatar me, long seed) {
+    private static void saveProgress(TETile[][] finalMap, Avatar me, long seed) {
         try {
             saveFile.createNewFile();
         } catch (IOException e) {
@@ -215,7 +218,6 @@ public class Engine {
         Save newSave = new Save(finalMap, me , seed);
         Utils.writeObject(saveFile, newSave);
         System.out.println("saved");
-        System.exit(0);
     }
 
     private static void showMainMenu() {
